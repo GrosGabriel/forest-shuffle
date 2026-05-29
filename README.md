@@ -2,7 +2,7 @@
 
 This is a web app for scoring for the game forest shuffle. You can take a picture of your forest, and potentially modify by hand your forest afterwards.
 
-## The game is available at : 
+## The game is available at : https://grosgabriel.github.io/forest-shuffle/
 
 ## How it works
 
