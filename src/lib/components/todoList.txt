@@ -1,0 +1,12 @@
+
+Restreindre la modification des cartes: par exemple pour plusieurs papillons en haut. en train d'être fait 
+
+Ajouter plus de cartes sur le côté : lièvres  fait.
+
+Une fois qu'on a ajouté un Coucou, on devrait pas pouvoir modifier l'oiseau en autre chose qu'un oiseau
+
+Ajouter plus de cartes en bas : crapauds  fait.
+Régler le pb de points du crapaud commun
+
+
+

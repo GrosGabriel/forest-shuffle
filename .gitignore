@@ -1,0 +1,41 @@
+node_modules/
+
+# SvelteKit / Vite
+.svelte-kit/
+build/
+dist/
+.output/
+vite.config.js.timestamp-*
+vite.config.ts.timestamp-*
+*.tsbuildinfo
+
+# Deploy targets
+.vercel/
+.netlify/
+.wrangler/
+
+# Environment files
+.env
+.env.*
+!.env.example
+!.env.test
+!.env.*.example
+
+# Logs and caches
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+*.log
+.eslintcache
+.cache/
+
+# OS / editor files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Misc
+coverage/
+tmp/
+temp/
