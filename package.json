@@ -7,7 +7,7 @@
 		"dev": "vite dev",
 		"build": "vite build",
 		"preview": "vite preview",
-		"deploy": "gh-pages -d build"
+		"deploy": "gh-pages -d build --nojekyll"
 	},
 	"devDependencies": {
 		"@sveltejs/adapter-auto": "^7.0.1",
