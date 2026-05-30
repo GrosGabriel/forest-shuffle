@@ -2,16 +2,23 @@ import * as ort from 'onnxruntime-web'
 import { cardFromClassId } from '../../model/card-yolo-to-glaure';
 
 let session : ort.InferenceSession  | null = null
+let sessionReady = false;
+let sessionLoading = false
 
 
 
 export async function getSession() {
-  if (!session) {
+  if (!session && !sessionLoading) {
+    sessionLoading = true
     session = await ort.InferenceSession.create(
     `${import.meta.env.BASE_URL}/best.onnx`, // besoin de /best.onnx pour gh pages
     { executionProviders: ['webgpu', 'webgl', 'wasm'] }); // order de priorité : WebGPU → WebGL → WASM
 
     await warmup(session) // compilation shaders absorbée ici
+  }
+
+  while (!sessionReady) {
+    await new Promise(resolve => setTimeout(resolve, 100))
   }
   return session
 }
@@ -21,8 +28,10 @@ export async function getSession() {
 //Le warmup consiste à faire une inférence factice pour "chauffer" le moteur d'inférence, charger les shaders, etc.
 //  Cela permet d'obtenir des temps d'inférence plus rapides lors de la première utilisation réelle.
 async function warmup(session: ort.InferenceSession) { 
+  sessionReady = false
   const dummy = new ort.Tensor('float32', new Float32Array(1 * 3 * 640 * 640), [1, 3, 640, 640])
   await session.run({ images: dummy })
+  sessionReady = true
 }
 
 
@@ -66,7 +75,7 @@ export default async function detectCards(imgSrc: string): Promise<Array<{ class
 
 
   try {
-  const result = await session.run({ images: input })
+  const result = await session!.run({ images: input })
   const output = result.output0.data as Float32Array
   //console.log('Shape output0 :', result.output0.dims)
   //console.log('5 premières valeurs :', output.slice(0, 5))
