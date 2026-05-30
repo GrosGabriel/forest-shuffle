@@ -7,7 +7,7 @@ export default {
 		}),
 
 		paths: {
-			base: '/forest-shuffle'
+			base: '/forest-shuffle' // nécessaire pour que ça fonctionne sur GitHub Pages, à la racine du repo
 		}
 	}
 };

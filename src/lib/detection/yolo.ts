@@ -4,18 +4,46 @@ import { cardFromClassId } from '../../model/card-yolo-to-glaure';
 let session : ort.InferenceSession  | null = null
 
 
-async function getSession() {
+
+export async function getSession() {
   if (!session) {
-    session = await ort.InferenceSession.create('best.onnx')
+    session = await ort.InferenceSession.create(
+    `${import.meta.env.BASE_URL}/best.onnx`, // besoin de /best.onnx pour gh pages
+    { executionProviders: ['webgpu', 'webgl', 'wasm'] }); // order de priorité : WebGPU → WebGL → WASM
+
+    await warmup(session) // compilation shaders absorbée ici
   }
   return session
 }
-// Prend un HTMLImageElement ou un HTMLCanvasElement, retourne des Prediction[]
 
-export default async function detectCards(img: HTMLImageElement): Promise<Array<{ classId: number; confidence: number; cx: number; cy: number; w: number; h: number }>> {
+
+
+//Le warmup consiste à faire une inférence factice pour "chauffer" le moteur d'inférence, charger les shaders, etc.
+//  Cela permet d'obtenir des temps d'inférence plus rapides lors de la première utilisation réelle.
+async function warmup(session: ort.InferenceSession) { 
+  const dummy = new ort.Tensor('float32', new Float32Array(1 * 3 * 640 * 640), [1, 3, 640, 640])
+  await session.run({ images: dummy })
+}
+
+
+// Prend un HTMLImageElement ou un HTMLCanvasElement, retourne des Prediction[]
+// Prend un string (URL) finalement, charge l'image, puis retourne des Prediction[]
+
+export default async function detectCards(imgSrc: string): Promise<Array<{ classId: number; confidence: number; cx: number; cy: number; w: number; h: number }>> {
   const session = await getSession()
   //console.log('Entrées :', session.inputNames)   // → ['images'] ou autre
   //console.log('Sorties :', session.outputNames)  // → ['output0'] ou autre
+
+  // 0. Charger l'image depuis l'URL
+  const img = await new Promise<HTMLImageElement>((resolve, reject) => {
+    const image = new Image()
+    image.crossOrigin = 'anonymous'
+    image.onload = () => resolve(image)
+    image.onerror = reject
+    image.src = imgSrc
+  })
+
+
 
   // 1. Redimensionner en 640×640 (taille attendue par YOLO)
   const canvas = document.createElement('canvas')

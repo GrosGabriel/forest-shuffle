@@ -31,7 +31,7 @@
   
 
 
-  async function handleFileChange(event: Event) {
+  function handleFileChange(event: Event) {
     const target = event.target as HTMLInputElement
     if (!target.files?.length) return
 
@@ -41,13 +41,48 @@
     // Lancer la détection dès que l'image est chargée
     const img = new Image()
     img.src = imageUrlState.imageUrl[playerState.player]
-    img.onload = async () => {
-      loading = true
-      predictionsState.predictions[playerState.player] = await detectCards(img)
-      realForestState.loadFromPredictions(playerState.player, predictionsState.predictions[playerState.player])
-      loading = false
-    }
+
   } 
+
+  function rotateImage90(img: HTMLImageElement): Promise<HTMLImageElement> {
+    return new Promise((resolve) => {
+      const canvas = document.createElement("canvas");
+      const ctx = canvas.getContext("2d")!;
+
+      canvas.width = img.height;
+      canvas.height = img.width;
+
+      ctx.translate(canvas.width / 2, canvas.height / 2);
+      ctx.rotate(- Math.PI / 2);
+      ctx.drawImage(img, -img.width / 2, -img.height / 2);
+
+      const rotatedImg = new Image();
+      rotatedImg.onload = () => resolve(rotatedImg);
+      rotatedImg.src = canvas.toDataURL("image/jpeg");
+    });
+  }
+
+async function rotateAndStore() {
+  if (!imageUrlState.imageUrl[playerState.player]) return;
+
+  // Load the current URL string into an HTMLImageElement for canvas use
+  const currentUrl = imageUrlState.imageUrl[playerState.player];
+  const img = new Image();
+  await new Promise<void>((resolve) => { img.onload = () => resolve(); img.src = currentUrl; });
+
+  // rotateImage90 returns an HTMLImageElement — store only its .src (a data URL) back into state
+  const rotatedImg = await rotateImage90(img);
+  imageUrlState.imageUrl[playerState.player] = rotatedImg.src;
+
+
+}
+
+ async function validerImage() {
+    loading = true
+    predictionsState.predictions[playerState.player] = await detectCards(imageUrlState.imageUrl[playerState.player])
+    realForestState.loadFromPredictions(playerState.player, predictionsState.predictions[playerState.player])
+    loading = false
+ }
   
   const realForestState = useRealForestState() as any;
 
@@ -116,6 +151,11 @@
 
   {#if imageUrlState.imageUrl[playerState.player]}
     <img src={imageUrlState.imageUrl[playerState.player]} alt="Preview" width="640" height="640" style="object-fit:contain; display:block;" />
+
+    <button onclick={rotateAndStore} disabled={loading}>
+      🔄 Tourner 90° 
+    </button>
+    <button onclick={validerImage} disabled={loading}>Valider (prédire la forêt)</button>
   {/if}
 
   {#if loading}
