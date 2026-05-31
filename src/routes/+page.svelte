@@ -91,10 +91,16 @@ async function rotateAndStore() {
   const glauresForestState = useGlauresForestState();
   
   $effect(() => {
-    const currentRealForest = realForestState.realForest[playerState.player];
-    if (!currentRealForest) return;
+      const allRealForests = Object.values(realForestState.realForest as Record<string, any>)
+          .filter(rf => rf?.forest?.length > 0)
+      
+      if (!allRealForests.length) return
 
-    glauresForestState.glauresForest = currentRealForest; //On utilise le setter 
+      glauresForestState.loadForPlayer(
+          playerState.player,
+          allRealForests,
+          caveState.caves
+      )
   })
   
   const caveState = useCaveState() as any;
@@ -195,7 +201,7 @@ async function rotateAndStore() {
 
   <CaveView />
 
-
+  <AddATreeView />
 
 {#if realForestState.realForest[playerState.player]?.forest.length > 0}
 
@@ -203,7 +209,12 @@ async function rotateAndStore() {
 
 {/if}
 
-<AddATreeView />
+
+
+
+
+
+
 
 </div>
 

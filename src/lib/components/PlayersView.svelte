@@ -44,7 +44,7 @@
         {/if}
 
       {#if realForestState.realForest[player]}
-        {realForestState.points(player, caveState.caves[player])}
+        {realForestState.points(player, caveState.caves)}
       {/if}
     </div>
   {/each}

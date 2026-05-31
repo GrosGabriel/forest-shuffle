@@ -29,7 +29,7 @@ import { allCards } from "./realForest.js";
  * console.log(scored[0].points)  // score Alice
  * console.log(scored[1].points)  // score Bob
  */
-export function toGlauresForests(realForests, cave = { caveType: 'cave', count: 0 }) {
+export function toGlauresForests(realForests, caves = {}) {
   const allForests = []
 
   // 1. Créer toutes les instances Forest
@@ -75,8 +75,8 @@ export function toGlauresForests(realForests, cave = { caveType: 'cave', count: 
       }
     }
 
-    // 2d. Gérer la cave
-    
+    // 2d. Cave par joueur
+    const cave = caves[realForest.playerName] ?? {caveType : "cave" , count : 0} // Par défaut, cave classique
     glauresForest.setCaveType(cave.caveType)  // 'cave', 'batCave', etc.
     glauresForest.caveCount = cave.count
     

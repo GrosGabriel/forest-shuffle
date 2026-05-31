@@ -8,13 +8,16 @@ const useGlauresForestState = () => {
         get glauresForest() {
             return glauresForestState;
         },
-        set glauresForest(realForest) {
-            if (!realForest?.playerName) {
-                glauresForestState = {};
-                return;
-            }
+        
 
-            glauresForestState = toGlauresForests([realForest])[0] ?? {};
+        //Prend toutes les forêts + caves, et le joueur courant
+        loadForPlayer(playerName, allRealForests, caves = {}) {
+            if (!allRealForests?.length) {
+                glauresForestState = {};
+                return ;
+            }
+            const scored = toGlauresForests(allRealForests, caves);
+            glauresForestState  = scored.find(f => f.playerName == playerName) ?? {};
         },
 
         get debugForest() {

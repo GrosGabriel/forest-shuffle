@@ -58,12 +58,24 @@ const useRealForestState = () => {
             realForestState[playerName] = rf
         },
 
-        points(playerName, cave = { caveType: 'cave', count: 0 }) {
+        points2(playerName, cave = { caveType: 'cave', count: 0 }) {
             const realForest = realForestState[playerName];
             if (!realForest) return 0;
 
             return toGlauresForests([realForest], cave)[0]?.points ?? 0;
         }, 
+
+
+        points(playerName, cave = {}) {
+            const allRealForests = Object.values(realForestState)
+                .filter(rf => rf && rf.forest);
+
+            if (!allRealForests.length) return 0;
+
+            const scored = toGlauresForests(allRealForests, cave);
+            return scored.find(f => f.playerName == playerName)?.points ?? 0;
+        },
+
 
         renamePlayer(oldName, newName) {
             if (realForestState[oldName]) {
@@ -134,6 +146,10 @@ const useRealForestState = () => {
             realForestState[playerName].forest = realForestState[playerName].forest.map(tree =>
                 tree.id === treeId ? newTree : tree
             );
+        },
+
+        deleteTree(playerName, treeId) {
+            realForestState[playerName].forest = realForestState[playerName].forest.filter(tree => tree.id !== treeId) 
         },
     }
 }

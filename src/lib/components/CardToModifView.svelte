@@ -104,6 +104,7 @@
             <button class="tree-selector" onclick={() => {
                         treeModifState.treeToModif.tree = base.name ;
                         treeModifState.treeToModif.symbol = TreeColor[base.name] ?? "none";
+                        cardModifState.validated = true;
                         cardModifState.openModalModifCard = false;}}>
                 {FR_CARDS[base.name]}
             </button>
@@ -121,6 +122,7 @@
                 <button class = "card-selector" onclick={() => {
                         cardModifState.cardToModif.cardName = card.name;
                         cardModifState.cardToModif.color = "none" //TODO gérer les couleurs des cartes (actuellement on perd l'info de la couleur quand on modifie une carte)
+                        cardModifState.validated = true;
                         cardModifState.openModalModifCard = false;
                         treeModifState.updateCard(cardModifState.cardToModif);
                 }}>
@@ -134,6 +136,7 @@
                     treeModifState.deleteCard(cardModifState.cardToModif);
                     cardModifState.cardToModif = null;
                     cardModifState.idCardToModif = null;
+                    cardModifState.validated = true;
                     cardModifState.openModalModifCard = false;
                 }}>
                 <span>Supprimer la carte</span>
@@ -153,7 +156,9 @@
                         treeModifState.updateCard(cardModifState.cardToModif);
                         cardModifState.somethingSpecial = false;
                         cardModifState.multipleButterflies = false;
+                        cardModifState.validated = true;
                         cardModifState.openModalModifCard = false;
+                        
                 }}>
                 {FR_CARDS[card.name]}
                 </button>
@@ -166,6 +171,7 @@
                     cardModifState.idCardToModif = null;
                     cardModifState.multipleButterflies = false;
                     cardModifState.somethingSpecial = false;
+                    cardModifState.validated = true;
                     cardModifState.openModalModifCard = false;
                 }}>
             <span>Supprimer la carte</span>
@@ -187,6 +193,7 @@
                         treeModifState.updateCard(cardModifState.cardToModif);
                         cardModifState.somethingSpecial = false;
                         cardModifState.addingCoucou = false;
+                        cardModifState.validated = true;
                         cardModifState.openModalModifCard = false;
                 }}>
                 {FR_CARDS[card.name]}
@@ -200,6 +207,7 @@
                     cardModifState.idCardToModif = null;
                     cardModifState.addingCoucou = false;
                     cardModifState.somethingSpecial = false;
+                    cardModifState.validated = true;
                     cardModifState.openModalModifCard = false;
                 }}>
             <span>Supprimer la carte</span>
@@ -222,6 +230,7 @@
                         cardModifState.somethingSpecial = false;
                         cardModifState.addingLievre = false;
                         cardModifState.sideCardToModif = null;
+                        cardModifState.validated = true;
                         cardModifState.openModalModifCard = false;
                 }}>
                 {FR_CARDS[card.name]}
@@ -236,6 +245,7 @@
                     cardModifState.sideCardToModif = null;
                     cardModifState.addingLievre = false;
                     cardModifState.somethingSpecial = false;
+                    cardModifState.validated = true;
                     cardModifState.openModalModifCard = false;
                 }}>
             <span>Supprimer la carte</span>
@@ -257,6 +267,7 @@
                         treeModifState.updateCard(cardModifState.cardToModif);
                         cardModifState.somethingSpecial = false;
                         cardModifState.addingCrapaudCommun = false;
+                        cardModifState.validated = true;
                         cardModifState.openModalModifCard = false;
                 }}>
                 {FR_CARDS[card.name]}
@@ -270,6 +281,7 @@
                     cardModifState.idCardToModif = null;
                     cardModifState.addingCrapaudCommun = false;
                     cardModifState.somethingSpecial = false;
+                    cardModifState.validated = true;
                     cardModifState.openModalModifCard = false;
                 }}>
             <span>Supprimer la carte</span>
@@ -291,6 +303,7 @@
                         treeModifState.updateCard(cardModifState.cardToModif);
                         cardModifState.somethingSpecial = false;
                         cardModifState.modifyColor = false;
+                        cardModifState.validated = true;
                         cardModifState.openModalModifCard = false;
                 }}>
                 {colorName}
@@ -303,6 +316,7 @@
                     treeModifState.updateCard(cardModifState.cardToModif);
                     cardModifState.somethingSpecial = false;
                     cardModifState.modifyColor = false;
+                    cardModifState.validated = true;
                     cardModifState.openModalModifCard = false;
                 }}>
             <span>Supprimer la couleur</span>
@@ -320,6 +334,7 @@
                         treeModifState.treeToModif.symbol = colorName;
                         cardModifState.somethingSpecial = false;
                         cardModifState.modifyColor = false;
+                        cardModifState.validated = true;
                         cardModifState.openModalModifCard = false;
                 }}>
                 {colorName}
@@ -331,6 +346,7 @@
                     treeModifState.treeToModif.symbol = "none";
                     cardModifState.somethingSpecial = false;
                     cardModifState.modifyColor = false;
+                    cardModifState.validated = true;
                     cardModifState.openModalModifCard = false;
                 }}>
             <span>Supprimer la couleur</span>

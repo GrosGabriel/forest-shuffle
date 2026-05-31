@@ -9,6 +9,7 @@
     import cards from "../../model/glaure/cards.js";
 
     import CardToModifView from "./CardToModifView.svelte";
+    import Modal from "./Modal.svelte";
 
     import { createEventDispatcher } from "svelte";
 
@@ -35,9 +36,10 @@
 
     function validerModal() {
         // Mettre à jour la forêt réelle avec les modifications du nouvel arbre
-        realForestState.updateTree(playerState.player, idTree, JSON.parse(JSON.stringify(treeModifState.treeToModif))); //TODO CETTE FONCTION
+        realForestState.updateTree(playerState.player, idTree, JSON.parse(JSON.stringify(treeModifState.treeToModif))); 
         closeModal();
     }
+    
 
     function ortieOnTheTree(tree) {
         return tree.down.some(card => card.cardName === "stingingNettle");
@@ -114,6 +116,7 @@
                         treeModifState.addCard("up", newCard);
                         cardModifState.idCardToModif = newCard.id;
                         cardModifState.cardToModif = JSON.parse(JSON.stringify(newCard));
+                        cardModifState.isNewCard = true;
                         cardModifState.openModalModifCard = true;
 
                     }}>
@@ -134,6 +137,7 @@
                         cardModifState.somethingSpecial = true;
                         cardModifState.multipleButterflies = true;
                         cardModifState.cardToModif = JSON.parse(JSON.stringify(newCard));
+                        cardModifState.isNewCard = true;
                         cardModifState.openModalModifCard = true;
                     }}
                     >
@@ -154,6 +158,7 @@
                         cardModifState.somethingSpecial = true;
                         cardModifState.addingCoucou = true;
                         cardModifState.cardToModif = JSON.parse(JSON.stringify(newCard));
+                        cardModifState.isNewCard = true;
                         cardModifState.openModalModifCard = true;
                     }}>
                     <span class="card-name"> + </span>
@@ -180,6 +185,7 @@
                             cardModifState.somethingSpecial = true;
                             cardModifState.modifyColor = true;
                             cardModifState.colorToModify = "none";
+                            cardModifState.isNewCard = false;
                             cardModifState.openModalModifCard = true;
                         }}
                         >
@@ -197,6 +203,7 @@
                             cardModifState.somethingSpecial = true;
                             cardModifState.modifyColor = true;
                             cardModifState.colorToModify = card.color;
+                            cardModifState.isNewCard = false;
                             cardModifState.openModalModifCard = true;
                         }}
                         ></span>
@@ -224,6 +231,7 @@
                         treeModifState.addCard("left", newCard);
                         cardModifState.idCardToModif = newCard.id;
                         cardModifState.cardToModif = JSON.parse(JSON.stringify(newCard));
+                        cardModifState.isNewCard = true;
                         cardModifState.openModalModifCard = true;
 
                     }}>
@@ -245,6 +253,7 @@
                         cardModifState.addingLievre = true;
                         cardModifState.sideCardToModif = "left";
                         cardModifState.cardToModif = JSON.parse(JSON.stringify(newCard));
+                        cardModifState.isNewCard = true;
                         cardModifState.openModalModifCard = true;
                     }}
                     >
@@ -258,6 +267,7 @@
                     onclick={() => {
                         cardModifState.idCardToModif = card.id;
                         cardModifState.cardToModif = JSON.parse(JSON.stringify(card));
+                        cardModifState.isNewCard = false;
                         cardModifState.openModalModifCard = true;
                     }} // ouvrir le modal avec l'id de la carte à modifier 
                     >
@@ -273,6 +283,7 @@
                                 cardModifState.somethingSpecial = true;
                                 cardModifState.modifyColor = true;
                                 cardModifState.colorToModify = "none";
+                                cardModifState.isNewCard = false;
                                 cardModifState.openModalModifCard = true;
                             }}
                             >
@@ -290,6 +301,7 @@
                                 cardModifState.somethingSpecial = true;
                                 cardModifState.modifyColor = true;
                                 cardModifState.colorToModify = card.color;
+                                cardModifState.isNewCard = false;
                                 cardModifState.openModalModifCard = true;
                             }}
                             ></span>
@@ -322,6 +334,7 @@
                             cardModifState.somethingSpecial = true;
                             cardModifState.modifyColor = true;
                             cardModifState.colorToModify = "none";
+                            cardModifState.isNewCard = false;
                             cardModifState.openModalModifCard = true;
                         }}
                         >
@@ -338,6 +351,7 @@
                             cardModifState.somethingSpecial = true;
                             cardModifState.modifyColor = true;
                             cardModifState.colorToModify = "none";
+                            cardModifState.isNewCard = false;
                             cardModifState.openModalModifCard = true;
                         }}
                         ></span>
@@ -354,6 +368,7 @@
                     onclick={() => {
                         cardModifState.idCardToModif = card.id;
                         cardModifState.openModalModifCard = true;
+                        cardModifState.isNewCard = false;
                         cardModifState.cardToModif = JSON.parse(JSON.stringify(card));
                     }}
                     >
@@ -369,6 +384,7 @@
                                 cardModifState.somethingSpecial = true;
                                 cardModifState.modifyColor = true;
                                 cardModifState.colorToModify = "none";
+                                cardModifState.isNewCard = false;
                                 cardModifState.openModalModifCard = true;
                             }}
                             >
@@ -386,6 +402,7 @@
                                 cardModifState.somethingSpecial = true;
                                 cardModifState.modifyColor = true;
                                 cardModifState.colorToModify = card.color;
+                                cardModifState.isNewCard = false;
                                 cardModifState.openModalModifCard = true;
                             }}
                             ></span>
@@ -406,6 +423,7 @@
                         treeModifState.addCard("right", newCard);
                         cardModifState.idCardToModif = newCard.id;
                         cardModifState.cardToModif = JSON.parse(JSON.stringify(newCard));
+                        cardModifState.isNewCard = true;
                         cardModifState.openModalModifCard = true;
 
                     }}>
@@ -427,6 +445,7 @@
                         cardModifState.addingLievre = true;
                         cardModifState.sideCardToModif = "right";
                         cardModifState.cardToModif = JSON.parse(JSON.stringify(newCard));
+                        cardModifState.isNewCard = true;
                         cardModifState.openModalModifCard = true;
                     }}
                     >
@@ -445,6 +464,7 @@
                     onclick={() => {
                         cardModifState.idCardToModif = card.id;
                         cardModifState.cardToModif = JSON.parse(JSON.stringify(card));
+                        cardModifState.isNewCard = false;
                         cardModifState.openModalModifCard = true;
                     }}
                     >
@@ -460,6 +480,7 @@
                             cardModifState.somethingSpecial = true;
                             cardModifState.modifyColor = true;
                             cardModifState.colorToModify = "none";
+                            cardModifState.isNewCard = false;
                             cardModifState.openModalModifCard = true;
                         }}
                         >
@@ -477,6 +498,7 @@
                             cardModifState.somethingSpecial = true;
                             cardModifState.modifyColor = true;
                             cardModifState.colorToModify = card.color;
+                            cardModifState.isNewCard = false;
                             cardModifState.openModalModifCard = true;
                         }}
                         ></span>
@@ -496,6 +518,7 @@
                         treeModifState.addCard("down", newCard);
                         cardModifState.idCardToModif = newCard.id;
                         cardModifState.cardToModif = JSON.parse(JSON.stringify(newCard));
+                        cardModifState.isNewCard = true;
                         cardModifState.openModalModifCard = true;
 
                     }}>
@@ -516,6 +539,7 @@
                         cardModifState.somethingSpecial = true;
                         cardModifState.addingCrapaudCommun = true;
                         cardModifState.cardToModif = JSON.parse(JSON.stringify(newCard));
+                        cardModifState.isNewCard = true;
                         cardModifState.openModalModifCard = true;
                     }}>
                     <span class="card-name"> + </span>
@@ -536,11 +560,33 @@
 <div class="modal-backdrop">
     <button onclick={closeModal} class="close-button">Annuler</button>
     <button onclick={validerModal} class="validate-button">Valider</button>
+    <button onclick={() => {
+        realForestState.deleteTree(playerState.player, treeModifState.idTreeToModif); 
+        closeModal();}} class="delete-tree-button"
+        >
+        Supprimer l'arbre
+    </button>
 </div>
 
-{#if cardModifState.openModalModifCard}
-    <CardToModifView  on:close={() => {cardModifState.sideCardToModif = null; cardModifState.somethingSpecial = false; cardModifState.openModalModifCard = false; cardModifState.idCardToModif = null;}} />
-{/if}
+<Modal open={cardModifState.openModalModifCard} onclose={() => {
+                                                    // Supprimer la carte seulement si nouvelle ET pas validée
+                                                    if (cardModifState.isNewCard && !cardModifState.validated && cardModifState.cardToModif) {
+                                                        treeModifState.deleteCard(cardModifState.cardToModif)
+                                                    }
+                                                    // Reset
+                                                    cardModifState.validated = false
+                                                    cardModifState.isNewCard = false
+                                                    cardModifState.openModalModifCard = false; 
+                                                    cardModifState.idCardToModif = null; 
+                                                    cardModifState.somethingSpecial = false;
+                                                    }}>
+    <CardToModifView  on:close={() => {
+                            cardModifState.sideCardToModif = null; 
+                            cardModifState.somethingSpecial = false; 
+                            cardModifState.openModalModifCard = false; 
+                            cardModifState.idCardToModif = null;
+                            }} />
+</Modal>    
 
 
 <style>

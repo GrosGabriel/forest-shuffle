@@ -12,7 +12,7 @@
   import { useTreeModifState } from "$lib/states/treeModifState.svelte.js";
 
   import AddACardView from "./AddACardView.svelte";
-
+  import Modal from "./Modal.svelte";
 
   const caveState = useCaveState();
   const playerState = usePlayerState();
@@ -171,13 +171,15 @@
 
       
   </div>
+
 </div>
 
-{#if treeToModifState.openModalModifTree}
 
+<Modal open={treeToModifState.openModalModifTree} onclose={() => {treeToModifState.openModalModifTree = false; treeToModifState.idTreeToModif = null;}}>
+  {#if treeToModifState.openModalModifTree}
   <AddACardView idTree={treeToModifState.idTreeToModif} on:close={() => {treeToModifState.openModalModifTree = false; treeToModifState.idTreeToModif = null;}} />
-
-{/if}
+  {/if}
+</Modal>
 
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=DM+Mono:wght@400;500&display=swap');

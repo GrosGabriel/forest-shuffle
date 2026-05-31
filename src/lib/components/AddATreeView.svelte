@@ -4,6 +4,7 @@
 
     import cards from "../../model/glaure/cards.js";
     import { FR_CARDS } from "$lib/i18n/fr-cards";
+    import Modal from "./Modal.svelte";
 
     const realForestState = useRealForestState();
     const playerState = usePlayerState();
@@ -21,7 +22,7 @@
     <button onclick={() => {openModalNewTree = true;}}> + </button>
 </div>
 
-{#if openModalNewTree}
+<Modal open={openModalNewTree} onclose={() => {openModalNewTree = false;}}>
     <div class="modal">
         <div class="modal-content">
         
@@ -37,7 +38,7 @@
         </div>
     </div>
 
-{/if}
+</Modal>
 
 
 
