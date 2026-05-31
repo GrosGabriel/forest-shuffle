@@ -171,7 +171,7 @@
                         cardModifState.idCardToModif = card.id;
                         cardModifState.cardToModif = JSON.parse(JSON.stringify(card));
                         cardModifState.openModalModifCard = true;
-                    }} // ouvrir le modal avec l'id de la carte à modifier
+                    }} 
                     >
                     {#if card.color === 'none'}
                         <!-- svelte-ignore a11y_click_events_have_key_events -->
@@ -269,7 +269,7 @@
                         cardModifState.cardToModif = JSON.parse(JSON.stringify(card));
                         cardModifState.isNewCard = false;
                         cardModifState.openModalModifCard = true;
-                    }} // ouvrir le modal avec l'id de la carte à modifier 
+                    }} 
                     >
                         {#if card.color === 'none'}
                             <!-- svelte-ignore a11y_click_events_have_key_events -->
@@ -600,7 +600,7 @@
   .forest-root {
     font-family: 'DM Mono', monospace;
     background: linear-gradient(180deg, #ffffff 0%, #f5f7f2 100%);
-    min-height: 100vh;
+    /* min-height: 100vh; */
     padding: 2.5rem 2rem;
     color: #374151;
 

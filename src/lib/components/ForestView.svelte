@@ -192,7 +192,7 @@
   .forest-root {
     font-family: 'DM Mono', monospace;
     background: linear-gradient(180deg, #ffffff 0%, #f5f7f2 100%);
-    min-height: 100vh;
+    /* min-height: 100vh; */
     padding: 2.5rem 2rem;
     color: #374151;
 
