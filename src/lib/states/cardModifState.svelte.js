@@ -14,8 +14,8 @@ let cardModifState = $state({
     modifyColor : false, //pour savoir si on modifie la couleur d'une carte ou si on modifie la carte elle même (utile pour les cas spéciaux comme les lièvres)
     colorToModify : "none", //pour stocker la couleur à modifier quand on modifie la couleur d'une carte
     isNewCard : false, //pour savoir si on ajoute une nouvelle carte ou si on modifie une carte déjà présente, utile pour les fenetres modales
-    validated : false //pour savoir si on a validé les modifications ou bien si on a juste fermé la fenetre modale, utile pour les fenetres modales
-    
+    validated : false, //pour savoir si on a validé les modifications ou bien si on a juste fermé la fenetre modale, utile pour les fenetres modales
+    onlyBirds : false, //pour savoir si on doit présenter que des oiseaux comme options de cartes à rajouter, utile pour cas spécial coucou.
 
 });
 

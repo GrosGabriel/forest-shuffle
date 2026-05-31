@@ -84,7 +84,7 @@
         if (tree.down.length !== 1) {
             return false;
         }
-        return tree.down[0].cardName === "commonToad";
+        return tree.down[0].cardName === "commonToad" && tree.down.length == 1;
     }
 
 </script>
@@ -174,6 +174,21 @@
                         cardModifState.idCardToModif = card.id;
                         cardModifState.cardToModif = JSON.parse(JSON.stringify(card));
                         cardModifState.sideCardToModif = "up";
+                        cardModifState.isNewCard = false;
+
+                        const isCoucou = card.cardName === "cuckoo";
+                        const hasCoucouOnTree = treeModifState.treeToModif.up.some(c => c.cardName === "cuckoo");
+                        const isOiseau = cards.find(c => c.name === card.cardName)?.symbols.includes("bird");
+
+                        if (isCoucou) {
+                            // On a cliqué sur le coucou => propose seulement des coucous
+                            cardModifState.somethingSpecial = true;
+                            cardModifState.addingCoucou = true;
+                        } else if (isOiseau && hasCoucouOnTree) {
+                            // On a cliqué sur oiseau et ya un coucou => que des oiseaux
+                            cardModifState.somethingSpecial = true;
+                            cardModifState.onlyBirds = true;
+                        }
                         cardModifState.openModalModifCard = true;
                     }} 
                     >
@@ -592,13 +607,22 @@
                                                     if (cardModifState.isNewCard && !cardModifState.validated && cardModifState.cardToModif) {
                                                         treeModifState.deleteCard(cardModifState.cardToModif)
                                                     }
-                                                    // Reset
+                                                       // Reset
                                                     cardModifState.validated = false
                                                     cardModifState.isNewCard = false
                                                     cardModifState.openModalModifCard = false; 
                                                     cardModifState.idCardToModif = null; 
                                                     cardModifState.somethingSpecial = false;
                                                     cardModifState.sideCardToModif = null;
+                                                    cardModifState.cardToModif = null;
+                                                    cardModifState.multipleButterflies = false;
+                                                    cardModifState.addingCoucou = false;
+                                                    cardModifState.addingLievre = false;
+                                                    cardModifState.addingCrapaudCommun = false;
+                                                    cardModifState.modifyColor = false;
+                                                    cardModifState.colorToModify = null;
+                                                    cardModifState.onlyBirds = false;
+
                                                     }}>
     <CardToModifView  on:close={() => {
                             cardModifState.sideCardToModif = null; 

@@ -35,7 +35,7 @@
     function cardsPossibles(cardName) {
 
         const position = cards.find(c => c.name === cardName)?.position;
-        return cards.filter(c => c.position === position);
+        return cards.filter(c => c.position === position && c.name !== "cuckoo");
     }
 
     function papillonCards() {
@@ -48,27 +48,34 @@
     }
 
     function canOnlyAddButterfly(tree) {
+        if (tree.up.length <= 1) {
+            return false;
+        }
+
         const hasOrtie = ortieOnTheTree(tree);
         const upHasOnlyButterflies = tree.up.every(card =>
             cards.find(c => c.name === card.cardName)?.symbols.includes("butterfly")
         );
-        const upIsEmpty = tree.up.length === 0;
-        return hasOrtie && upHasOnlyButterflies && (!upIsEmpty);
+        
+        return hasOrtie && upHasOnlyButterflies;
     }
 
     function canOnlyAddCoucou(tree) {
-        if (tree.up.length !== 1) {
+        if (tree.up.length == 0) {
             return false
         }
         return cards.find(c => c.name === tree.up[0].cardName)?.symbols.includes("bird");
     }
     
+
+
+
     function coucouCards() {
         return cards.filter(c => c.name === "cuckoo");
     }
 
     function lievreCards() {
-        return cards.filter(c => c.name === "hare");
+        return cards.filter(c => c.name === "europeanHare");
     }
 
     function crapaudCommunCards() {
@@ -79,17 +86,17 @@
         if (!side) {
             return false;
         }
-        if (tree[side].length === 0) {
+        if (tree[side].length <= 1) {
             return false
         } 
-        return tree[side][0].cardName === "hare";
+        return tree[side][0].cardName === "europeanHare";
     }
 
     function canOnlyAddCrapaudCommun(tree) {
         if (tree.down.length == 0) {
             return false
         }
-        return tree.down[0].cardName === "commonToad";
+        return (tree.down[0].cardName === "commonToad") && (tree.down.length == 2);
     }
 
 </script>
@@ -114,7 +121,14 @@
     </div>
 {/if}
 
-{#if (!(isTree)) && (cardModifState.openModalModifCard) && (!(cardModifState.somethingSpecial)) && (!canOnlyAddButterfly(treeModifState.treeToModif)) && (!canOnlyAddCoucou(treeModifState.treeToModif))}
+{#if (!(isTree)) 
+    && (cardModifState.openModalModifCard) 
+    && (!(cardModifState.somethingSpecial)) 
+    && !(canOnlyAddButterfly(treeModifState.treeToModif) && (cardModifState.sideCardToModif === "up")) 
+    && !(canOnlyAddCoucou(treeModifState.treeToModif) && (cardModifState.sideCardToModif === "up") && (cardModifState.isNewCard)) 
+    && !(canOnlyAddLievre(treeModifState.treeToModif, cardModifState.sideCardToModif)) 
+    && !(canOnlyAddCrapaudCommun(treeModifState.treeToModif) && (cardModifState.sideCardToModif === "down"))
+    }
     <div class ="modal">
         <div class="modal-content">
             <h3>Choisissez la carte</h3>
@@ -145,7 +159,7 @@
     </div>
 {/if}
 
-{#if ((cardModifState.somethingSpecial) && (cardModifState.multipleButterflies)) || canOnlyAddButterfly(treeModifState.treeToModif)}
+{#if ((cardModifState.somethingSpecial) && (cardModifState.multipleButterflies)) || (canOnlyAddButterfly(treeModifState.treeToModif) && (cardModifState.sideCardToModif === "up"))}
     <div class="modal">
         <div class="modal-content">
             <h3>Choisissez le papillon</h3>
@@ -182,7 +196,7 @@
     </div>
 {/if}
 
-{#if ((cardModifState.somethingSpecial) && (cardModifState.addingCoucou)) || canOnlyAddCoucou(treeModifState.treeToModif) && (cardModifState.sideCardToModif === "up")}
+{#if ((cardModifState.somethingSpecial) && (cardModifState.addingCoucou)) || (canOnlyAddCoucou(treeModifState.treeToModif) && (cardModifState.sideCardToModif === "up") && (cardModifState.isNewCard))}
     <div class="modal">
         <div class="modal-content">
             <h3>Choisissez le coucou</h3>
@@ -218,7 +232,7 @@
     </div>
 {/if}
 
-{#if ((cardModifState.somethingSpecial) && (cardModifState.addingLievre)) || canOnlyAddLievre(treeModifState.treeToModif, cardModifState.sideCardToModif)}
+{#if ((cardModifState.somethingSpecial) && (cardModifState.addingLievre)) || (canOnlyAddLievre(treeModifState.treeToModif, cardModifState.sideCardToModif) && (cardModifState.sideCardToModif === "left" || cardModifState.sideCardToModif === "right"))}
     <div class="modal">
         <div class="modal-content">
             <h3>Choisissez le lièvre</h3>
@@ -256,7 +270,7 @@
     </div>
 {/if}
 
-{#if ((cardModifState.somethingSpecial) && (cardModifState.addingCrapaudCommun)) || canOnlyAddCrapaudCommun(treeModifState.treeToModif)}
+{#if ((cardModifState.somethingSpecial) && (cardModifState.addingCrapaudCommun)) || (canOnlyAddCrapaudCommun(treeModifState.treeToModif) && (cardModifState.sideCardToModif === "down"))}
     <div class="modal">
         <div class="modal-content">
             <h3>Choisissez la carte</h3>
@@ -353,4 +367,37 @@
             </button>
         </div>
     </div>
+{/if}
+
+{#if cardModifState.somethingSpecial && cardModifState.onlyBirds}
+  <div class="modal">
+    <div class="modal-content">
+      <h3>Choisissez l'oiseau</h3>
+      {#each cards.filter(c => c.symbols.includes("bird") && c.position === "top" && c.name !== "cuckoo") as card}
+        <button class="card-selector" onclick={() => {
+          cardModifState.cardToModif.cardName = card.name;
+          cardModifState.cardToModif.color = "none";
+          treeModifState.updateCard(cardModifState.cardToModif);
+          cardModifState.somethingSpecial = false;
+          cardModifState.onlyBirds = false;
+          cardModifState.validated = true;
+          cardModifState.openModalModifCard = false;
+        }}>
+          {FR_CARDS[card.name]}
+        </button>
+      {/each}
+
+      <button class="card-delete" onclick={() => {
+        treeModifState.deleteCard(cardModifState.cardToModif);
+        cardModifState.cardToModif = null;
+        cardModifState.idCardToModif = null;
+        cardModifState.onlyBirds = false;
+        cardModifState.somethingSpecial = false;
+        cardModifState.validated = true;
+        cardModifState.openModalModifCard = false;
+      }}>
+        <span>Supprimer la carte</span>
+      </button>
+    </div>
+  </div>
 {/if}
