@@ -182,7 +182,7 @@
     </div>
 {/if}
 
-{#if ((cardModifState.somethingSpecial) && (cardModifState.addingCoucou)) || canOnlyAddCoucou(treeModifState.treeToModif)}
+{#if ((cardModifState.somethingSpecial) && (cardModifState.addingCoucou)) || canOnlyAddCoucou(treeModifState.treeToModif) && (cardModifState.sideCardToModif === "up")}
     <div class="modal">
         <div class="modal-content">
             <h3>Choisissez le coucou</h3>

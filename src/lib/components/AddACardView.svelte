@@ -117,6 +117,7 @@
                         cardModifState.idCardToModif = newCard.id;
                         cardModifState.cardToModif = JSON.parse(JSON.stringify(newCard));
                         cardModifState.isNewCard = true;
+                        cardModifState.sideCardToModif = "up";
                         cardModifState.openModalModifCard = true;
 
                     }}>
@@ -138,6 +139,7 @@
                         cardModifState.multipleButterflies = true;
                         cardModifState.cardToModif = JSON.parse(JSON.stringify(newCard));
                         cardModifState.isNewCard = true;
+                        cardModifState.sideCardToModif = "up";
                         cardModifState.openModalModifCard = true;
                     }}
                     >
@@ -159,6 +161,7 @@
                         cardModifState.addingCoucou = true;
                         cardModifState.cardToModif = JSON.parse(JSON.stringify(newCard));
                         cardModifState.isNewCard = true;
+                        cardModifState.sideCardToModif = "up";
                         cardModifState.openModalModifCard = true;
                     }}>
                     <span class="card-name"> + </span>
@@ -170,6 +173,7 @@
                     onclick={() => {
                         cardModifState.idCardToModif = card.id;
                         cardModifState.cardToModif = JSON.parse(JSON.stringify(card));
+                        cardModifState.sideCardToModif = "up";
                         cardModifState.openModalModifCard = true;
                     }} 
                     >
@@ -186,6 +190,7 @@
                             cardModifState.modifyColor = true;
                             cardModifState.colorToModify = "none";
                             cardModifState.isNewCard = false;
+                            cardModifState.sideCardToModif = "up";
                             cardModifState.openModalModifCard = true;
                         }}
                         >
@@ -204,6 +209,7 @@
                             cardModifState.modifyColor = true;
                             cardModifState.colorToModify = card.color;
                             cardModifState.isNewCard = false;
+                            cardModifState.sideCardToModif = "up";
                             cardModifState.openModalModifCard = true;
                         }}
                         ></span>
@@ -232,6 +238,7 @@
                         cardModifState.idCardToModif = newCard.id;
                         cardModifState.cardToModif = JSON.parse(JSON.stringify(newCard));
                         cardModifState.isNewCard = true;
+                        cardModifState.sideCardToModif = "left";
                         cardModifState.openModalModifCard = true;
 
                     }}>
@@ -268,6 +275,7 @@
                         cardModifState.idCardToModif = card.id;
                         cardModifState.cardToModif = JSON.parse(JSON.stringify(card));
                         cardModifState.isNewCard = false;
+                        cardModifState.sideCardToModif = "left";
                         cardModifState.openModalModifCard = true;
                     }} 
                     >
@@ -284,6 +292,7 @@
                                 cardModifState.modifyColor = true;
                                 cardModifState.colorToModify = "none";
                                 cardModifState.isNewCard = false;
+                                cardModifState.sideCardToModif = "left";
                                 cardModifState.openModalModifCard = true;
                             }}
                             >
@@ -302,6 +311,7 @@
                                 cardModifState.modifyColor = true;
                                 cardModifState.colorToModify = card.color;
                                 cardModifState.isNewCard = false;
+                                cardModifState.sideCardToModif = "left";
                                 cardModifState.openModalModifCard = true;
                             }}
                             ></span>
@@ -369,6 +379,7 @@
                         cardModifState.idCardToModif = card.id;
                         cardModifState.openModalModifCard = true;
                         cardModifState.isNewCard = false;
+                        cardModifState.sideCardToModif = "right";
                         cardModifState.cardToModif = JSON.parse(JSON.stringify(card));
                     }}
                     >
@@ -385,6 +396,7 @@
                                 cardModifState.modifyColor = true;
                                 cardModifState.colorToModify = "none";
                                 cardModifState.isNewCard = false;
+                                cardModifState.sideCardToModif = "right";
                                 cardModifState.openModalModifCard = true;
                             }}
                             >
@@ -403,6 +415,7 @@
                                 cardModifState.modifyColor = true;
                                 cardModifState.colorToModify = card.color;
                                 cardModifState.isNewCard = false;
+                                cardModifState.sideCardToModif = "right";
                                 cardModifState.openModalModifCard = true;
                             }}
                             ></span>
@@ -424,6 +437,7 @@
                         cardModifState.idCardToModif = newCard.id;
                         cardModifState.cardToModif = JSON.parse(JSON.stringify(newCard));
                         cardModifState.isNewCard = true;
+                        cardModifState.sideCardToModif = "right";
                         cardModifState.openModalModifCard = true;
 
                     }}>
@@ -465,6 +479,7 @@
                         cardModifState.idCardToModif = card.id;
                         cardModifState.cardToModif = JSON.parse(JSON.stringify(card));
                         cardModifState.isNewCard = false;
+                        cardModifState.sideCardToModif = "down";
                         cardModifState.openModalModifCard = true;
                     }}
                     >
@@ -481,6 +496,7 @@
                             cardModifState.modifyColor = true;
                             cardModifState.colorToModify = "none";
                             cardModifState.isNewCard = false;
+                            cardModifState.sideCardToModif = "down";
                             cardModifState.openModalModifCard = true;
                         }}
                         >
@@ -499,6 +515,7 @@
                             cardModifState.modifyColor = true;
                             cardModifState.colorToModify = card.color;
                             cardModifState.isNewCard = false;
+                            cardModifState.sideCardToModif = "down";
                             cardModifState.openModalModifCard = true;
                         }}
                         ></span>
@@ -519,6 +536,7 @@
                         cardModifState.idCardToModif = newCard.id;
                         cardModifState.cardToModif = JSON.parse(JSON.stringify(newCard));
                         cardModifState.isNewCard = true;
+                        cardModifState.sideCardToModif = "down";
                         cardModifState.openModalModifCard = true;
 
                     }}>
@@ -540,6 +558,7 @@
                         cardModifState.addingCrapaudCommun = true;
                         cardModifState.cardToModif = JSON.parse(JSON.stringify(newCard));
                         cardModifState.isNewCard = true;
+                        cardModifState.sideCardToModif = "down";
                         cardModifState.openModalModifCard = true;
                     }}>
                     <span class="card-name"> + </span>
@@ -579,12 +598,14 @@
                                                     cardModifState.openModalModifCard = false; 
                                                     cardModifState.idCardToModif = null; 
                                                     cardModifState.somethingSpecial = false;
+                                                    cardModifState.sideCardToModif = null;
                                                     }}>
     <CardToModifView  on:close={() => {
                             cardModifState.sideCardToModif = null; 
                             cardModifState.somethingSpecial = false; 
                             cardModifState.openModalModifCard = false; 
                             cardModifState.idCardToModif = null;
+                            cardModifState.sideCardToModif = null;
                             }} />
 </Modal>    
 
