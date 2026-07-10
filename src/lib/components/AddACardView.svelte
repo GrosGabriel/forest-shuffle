@@ -3,6 +3,7 @@
     import { usePlayerState } from "$lib/states/playerState.svelte.js";
     import { useCardModifState } from "$lib/states/cardModifState.svelte.js";
     import { useTreeModifState } from "$lib/states/treeModifState.svelte.js";
+    import { useForestScanState } from "$lib/states/forestScanState.svelte.js";
     import { cardStyle, resolveColor, lighten } from "../utils/foretStyle.js";
 
     import { FR_CARDS } from "$lib/i18n/fr-cards";
@@ -14,7 +15,8 @@
     import { createEventDispatcher } from "svelte";
 
 
-    
+    const { idTree } = $props();
+
 
 
     const dispatch = createEventDispatcher();
@@ -26,17 +28,27 @@
     const realForestState = useRealForestState();
     const playerState = usePlayerState();
 
-    const { idTree } = $props();
+
     
 
     const cardModifState = useCardModifState();
     
     const treeModifState = useTreeModifState();
 
+    const forestScanState = useForestScanState();
+
 
     function validerModal() {
         // Mettre à jour la forêt réelle avec les modifications du nouvel arbre
-        realForestState.updateTree(playerState.player, idTree, JSON.parse(JSON.stringify(treeModifState.treeToModif))); 
+        // dépend de si c'est sur la forêt réelle, ou bien sur une forêt scannée
+
+        if (forestScanState.openModalScan) {
+            // On est sur la forêt scannée, on met à jour la forêt scannée
+            forestScanState.updateTree(idTree, JSON.parse(JSON.stringify(treeModifState.treeToModif)));
+        } else {
+            // On est sur la forêt réelle, on met à jour la forêt réelle
+            realForestState.updateTree(playerState.player, idTree, JSON.parse(JSON.stringify(treeModifState.treeToModif))); 
+        }
         closeModal();
     }
     
@@ -595,7 +607,13 @@
     <button onclick={closeModal} class="close-button">Annuler</button>
     <button onclick={validerModal} class="validate-button">Valider</button>
     <button onclick={() => {
-        realForestState.deleteTree(playerState.player, treeModifState.idTreeToModif); 
+        if (forestScanState.openModalScan) {
+            // On est sur la forêt scannée, on supprime l'arbre de la forêt scannée
+            forestScanState.deleteTree(idTree);
+        } else {
+            // On est sur la forêt réelle, on supprime l'arbre de la forêt réelle
+            realForestState.deleteTree(playerState.player, treeModifState.idTreeToModif); 
+        }
         closeModal();}} class="delete-tree-button"
         >
         Supprimer l'arbre
@@ -747,8 +765,8 @@
     position: absolute;
     top: 0;
     right: 0;
-    width: 18px;
-    height: 18px;
+    width: 70px; /*18 avant */
+    height: 70px;
     clip-path: polygon(100% 0, 0 0, 100% 100%);
     border-radius: 0 5px 0 0;
     opacity: 0.92;
@@ -756,8 +774,8 @@
 
   .ribbon-none {
   background: #c7c7c7;
-  width: 28px;
-  height: 28px;
+  width: 70px;
+  height: 70px; /* 28px avant */
   display: flex;
   align-items: flex-start;
   justify-content: flex-end;
@@ -806,16 +824,6 @@
     z-index: 2;
   }
 
-  .tree-ribbon {
-    position: absolute;
-    top: 0;
-    right: 0;
-    width: 34px;
-    height: 34px;
-    clip-path: polygon(100% 0, 0 0, 100% 100%);
-    border-radius: 0 8px 0 0;
-    opacity: 0.92;
-  }
 
   .tree-icon {
     font-size: 1.8rem;
@@ -835,8 +843,8 @@
     position: absolute;
     top: 0;
     right: 0;
-    width: 34px;
-    height: 34px;
+    width: 70px;
+    height: 70px; /* 34px avant */
     clip-path: polygon(100% 0, 0 0, 100% 100%);
     border-radius: 0 8px 0 0;
     opacity: 0.92;

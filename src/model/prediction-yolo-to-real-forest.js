@@ -386,7 +386,7 @@ import { RealForest, color, addTree } from './realForest.js'
  * @returns {RealForest} // Plus vraiment, on a plus de type RealForest a proprement parlé
  */
 export function predictionsToRealForest(playerName, predictions, confidenceThreshold = 0.5) {
-  const forest = new RealForest(playerName)
+  const forest = RealForest(playerName)
 
   // 1. Enrichir chaque prédiction avec yoloName, glCardName, slot, cardColor
   const enriched = predictions

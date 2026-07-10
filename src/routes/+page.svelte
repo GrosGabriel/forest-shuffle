@@ -9,6 +9,9 @@
   import CaveView from "$lib/components/CaveView.svelte";
   import PlayerView from "$lib/components/PlayersView.svelte";
   import AddATreeView from "$lib/components/AddATreeView.svelte";
+  import ForestScanView from "$lib/components/ForestScanView.svelte";
+  import Modal from "$lib/components/Modal.svelte";
+
 
   import { usePlayerState } from "$lib/states/playerState.svelte.js";
   import { useRealForestState } from "$lib/states/realForestState.svelte.js";
@@ -16,18 +19,22 @@
   import { useCaveState } from "$lib/states/caveState.svelte.js";
   import { usePredictionsState } from "$lib/states/predictionsState.svelte.js";
   import { useImageUrlState } from "$lib/states/imageUrlState.svelte.js";
+  import { useForestScanState } from "$lib/states/forestScanState.svelte.js";
 
 
 
 
-  let playerState = usePlayerState();
+  const playerState = usePlayerState();
 
   //let allPlayers = $derived(playerState.allPlayers);
   //let currentPlayer = $derived(playerState.player);
 
-  let imageUrlState = useImageUrlState() as any;
-  let predictionsState = usePredictionsState() as any;
+  const imageUrlState = useImageUrlState() as any;
+  const predictionsState = usePredictionsState() as any;
   let loading = $state(false);
+
+  
+  const forestScanState = useForestScanState() as any;
   
 
 
@@ -38,11 +45,28 @@
     const file = target.files[0]
     imageUrlState.imageUrl[playerState.player] = URL.createObjectURL(file)
 
-    // Lancer la détection dès que l'image est chargée
-    const img = new Image()
-    img.src = imageUrlState.imageUrl[playerState.player]
+    // Lance la détection une fois qu'on a validé ensuite.
 
   } 
+
+  async function handleScanChange(event: Event) {
+    const target = event.target as HTMLInputElement
+    if (!target.files?.length) return
+    const scan = URL.createObjectURL(target.files[0]);
+
+    let preds = await detectCards(scan)
+    
+    // realForestState.loadFromPredictions(playerState.player, preds)
+    // NON ICI ON VEUT CREER UN NOUVEL OBJECT FORET INDEPENDEMMENT DES JOUEURS, VOIR A QUOI RESSEMBLE CETTE FORET, 
+    // FAIRE DES MODIFS DESSUS, PUIS AVOIR LA POSSIBILITE DE MERGE AVEC LA FORET DU JOUEUR CURRENT.
+    
+    //forestScanState.forestScan = predictionsToRealForest(playerState.player,preds);
+    forestScanState.forestScan = predictionsToRealForest("scan", preds);  
+
+    forestScanState.openModalScan = true;
+
+  }
+
 
   function rotateImage90(img: HTMLImageElement): Promise<HTMLImageElement> {
     return new Promise((resolve) => {
@@ -145,7 +169,12 @@ async function rotateAndStore() {
 */
 </script>
 
+
+
 <PlayerView />
+
+
+
 
 
 
@@ -167,6 +196,19 @@ async function rotateAndStore() {
   {#if loading}
     <p>Analyse en cours...</p>
   {/if}
+
+
+  <!-- Ouvrir un modal de modification de la fôret scannée, puis bouton pour valider et ajouter le scan à la fôret du joueur-->
+  <Modal open={forestScanState.openModalScan} onclose={() => {forestScanState.openModalScan = false; forestScanState.forestScan = null;}}>
+    
+    {#if forestScanState.openModalScan}
+
+      <ForestScanView on:close={() => {forestScanState.openModalScan = false; forestScanState.forestScan = null;}}/>
+
+    {/if}
+  </Modal>
+  
+  
 
 <!--  Confidence des prédictions 
   {#if predictions.length > 0}
@@ -203,18 +245,49 @@ async function rotateAndStore() {
 
   <AddATreeView />
 
-{#if realForestState.realForest[playerState.player]?.forest.length > 0}
+  {#if realForestState.realForest[playerState.player]?.forest.length > 0}
 
-<ForestView forest={realForestState.realForest[playerState.player] ? realForestState.realForest[playerState.player].forest : []} />
+  <ForestView forest={realForestState.realForest[playerState.player] ? realForestState.realForest[playerState.player].forest : []} />
 
-{/if}
-
-
-
-
-
-
-
-
+  {/if}
 </div>
+
+
+<!-- Ruban fixe en bas d'écran -->
+<div class="bottom-ribbon">
+  <label class="upload-button scan-button">
+    📷 Charger un bout de forêt
+    <input type="file" accept="image/jpeg,.jpg" capture="environment" onchange={handleScanChange} />
+  </label>
+</div>
+
+<style>
+
+  .bottom-ribbon {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background: white;
+    border-top: 1px solid #ddd;
+    box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.1);
+    padding: 0.75rem 1rem;
+    display: flex;
+    justify-content: center;
+    z-index: 100; /* pour rester au-dessus du contenu et sous les modales éventuelles */
+  }
+
+  .scan-button {
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+  }
+
+  /* Évite que le contenu principal soit caché sous le ruban */
+  .container {
+    padding-bottom: 4.5rem; /* ajuste selon la hauteur réelle du ruban */
+  }
+</style>
+
+
 

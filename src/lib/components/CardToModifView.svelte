@@ -203,7 +203,7 @@
             {#each coucouCards() as card}
                 <button class = "card-selector" onclick={() => {
                         cardModifState.cardToModif.cardName = card.name;
-                        cardModifState.cardToModif.color = "none" //TODO gérer les couleurs des cartes (actuellement on perd l'info de la couleur quand on modifie une carte)
+                        cardModifState.cardToModif.color = "vert-clair";
                         treeModifState.updateCard(cardModifState.cardToModif);
                         cardModifState.somethingSpecial = false;
                         cardModifState.addingCoucou = false;

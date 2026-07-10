@@ -6,7 +6,7 @@
 
 	let { children } = $props();
 
-	export const ssr = false;
+	//export const ssr = false;
 	export const prerender = true;
 
 	onMount(() => getSession()) // warm-up silencieux

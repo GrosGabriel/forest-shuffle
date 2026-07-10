@@ -49,11 +49,11 @@ export const FR_CARDS: Record<string, string> = {
   greaterHorseshoeBat: "Grand rhinolophe",
   fallowDeer: "Daim",
   redDeer: "Cerf élaphe",
-  roeDeerBeech: "Chevreuil",
-  roeDeerBirch: "Chevreuil",
-  roeDeerHorseChestnut: "Chevreuil",
-  roeDeerLinden: "Chevreuil",
-  roeDeerSilverFir: "Chevreuil",
+  roeDeerBeech: "Chevreuil vert-foncé",
+  roeDeerBirch: "Chevreuil vert-clair",
+  roeDeerHorseChestnut: "Chevreuil orange",
+  roeDeerLinden: "Chevreuil jaune",
+  roeDeerSilverFir: "Chevreuil bleu",
   squeaker: "Marcassin",
   wildBoar: "Sanglier",
   beechMarten: "Fouine",
@@ -69,9 +69,9 @@ export const FR_CARDS: Record<string, string> = {
   stonePine: "Pin cembro",
   alpineMarmot: "Marmotte des Alpes",
   chamois: "Chamois",
-  chamoisStonePine: "Chamois",
-  chamoisEuropeanLarch: "Chamois",
-  chamoisDouglasFir: "Chamois",
+  chamoisStonePine: "Chamois rose",
+  chamoisEuropeanLarch: "Chamois violet",
+  chamoisDouglasFir: "Chamois gris",
   capercaillie: "Grand tétras",
   mountainHare: "Lièvre variable",
   steinbock: "Bouquetin des Alpes",
@@ -141,6 +141,7 @@ export const FR_CARDS: Record<string, string> = {
 
 
 
+  
 
   
 

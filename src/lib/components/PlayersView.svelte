@@ -2,6 +2,10 @@
     import { usePlayerState } from "$lib/states/playerState.svelte.js";
     import { useRealForestState } from "$lib/states/realForestState.svelte.js";
     import { useCaveState } from "$lib/states/caveState.svelte.js";
+
+    import Modal from "$lib/components/Modal.svelte";
+    import ModifyPlayerName from "$lib/components/ModifyPlayerName.svelte";
+
     const playerState = usePlayerState();
     const realForestState = useRealForestState();
     const caveState = useCaveState();
@@ -49,19 +53,12 @@
     </div>
   {/each}
 
-  {#if openModalModifNom}
 
-  <div class="modal">
-    <div class="modal-content">
-      
-      <h3>Modifier le nom du joueur</h3>
-      <input type="text" bind:value={newPlayerName} placeholder="Nouveau nom" />
-      <button onclick={() => { playerState.renamePlayer(playerToModifName, newPlayerName); openModalModifNom = false; }}>Valider</button>
-    </div>
-  </div>
+  <Modal open={openModalModifNom} onclose={() => {openModalModifNom = false;}}>
 
+      <ModifyPlayerName playerToModifName={playerToModifName} newPlayerName={newPlayerName} on:close={() => {openModalModifNom = false;}} />
 
-  {/if}
+  </Modal>
 
   <div class ="container">
     <button onclick={ajouteJoueur}>Ajouter un joueur</button>

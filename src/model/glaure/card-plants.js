@@ -141,3 +141,6 @@ export const wildTulip = {
 export const allPlants = [blackberries, treeFerns, wildStrawberries, moss, edelweiss, blueberry, gentian, digitalis, stingingNettle, maretak, bostulp,
     mistletoe, marshCinquefoil, wildTulip]
 
+export const allPlantsRestrictive = [blackberries, treeFerns, wildStrawberries, moss, edelweiss, blueberry, gentian, digitalis, stingingNettle, bostulp,
+    mistletoe, marshCinquefoil, wildTulip]
+// J'ai enlevé maretak car redondant pour gui avec mistletoe.

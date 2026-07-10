@@ -252,3 +252,4 @@ export const elk = {
 
 
 export const allDeers = [fallowDeer, redDeer, roeDeerBeech, roeDeerLinden, roeDeerSilverFir, roeDeerHorseChestnut, roeDeerBirch, squeaker, squeakerWE, wildBoar, wildBoarFemale, chamoisDouglasFir, chamoisEuropeanLarch, chamoisStonePine, steinbock, europeanBison, elk]
+

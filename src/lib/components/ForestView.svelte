@@ -10,6 +10,7 @@
   import { useCaveState } from "$lib/states/caveState.svelte.js";
   import { usePlayerState } from "$lib/states/playerState.svelte.js";
   import { useTreeModifState } from "$lib/states/treeModifState.svelte.js";
+  import { useForestScanState } from "$lib/states/forestScanState.svelte.js";
 
   import AddACardView from "./AddACardView.svelte";
   import Modal from "./Modal.svelte";
@@ -17,6 +18,7 @@
   const caveState = useCaveState();
   const playerState = usePlayerState();
 
+  const forestScanState = useForestScanState();
 
 
   import { lighten, resolveColor, cardStyle } from "../utils/foretStyle.js";
@@ -79,16 +81,19 @@
               {/if}
               <span class="card-name">{FR_CARDS[card.cardName]}</span>
 
-              {#if cards.find(c => c.name === card.cardName)?.symbols?.includes('butterfly')}
-                <span class="card-points">{getButterflySharedPoints()}</span>
+              {#if !forestScanState.openModalScan} <!-- On affiche pas les points si c'est le modal de scan-->
 
-              {:else if card.cardName === "beardedVulture"}
-                <span class="card-points">{getBeardedVulturePoints()}</span>
+                {#if cards.find(c => c.name === card.cardName)?.symbols?.includes('butterfly')}
+                  <span class="card-points">{getButterflySharedPoints()}</span>
 
-              {:else}
-                <span class="card-points">{getCardUnitPoints(card.cardName)}</span>
+                {:else if card.cardName === "beardedVulture"}
+                  <span class="card-points">{getBeardedVulturePoints()}</span>
+
+                {:else}
+                  <span class="card-points">{getCardUnitPoints(card.cardName)}</span>
+                {/if}
+
               {/if}
-              
             </div>
           {/each}
         </div>
@@ -107,7 +112,11 @@
                   <span class="ribbon" style={`background:${resolveColor(card.color)}`}></span>
                 {/if}
                 <span class="card-name">{FR_CARDS[card.cardName]}</span>
-                <span class="card-points">{getCardUnitPoints(card.cardName)}</span>
+
+                {#if !forestScanState.openModalScan} <!-- On affiche pas les points si c'est le modal de scan-->
+                  <span class="card-points">{getCardUnitPoints(card.cardName)}</span>
+                {/if}
+
               </div>
             {/each}
           </div>
@@ -127,7 +136,11 @@
               {/if}
               <span class="tree-icon">{isTree ? '🌳' : '🌿'}</span>
               <span class="tree-name">{FR_CARDS[treeData.tree]}</span>
-              <span class="card-points">{getCardUnitPoints(treeData.tree)}</span>
+
+              {#if !forestScanState.openModalScan} <!-- On affiche pas les points si c'est le modal de scan-->
+                <span class="card-points">{getCardUnitPoints(treeData.tree)}</span>
+              {/if}
+
             </button>
           
 
@@ -143,7 +156,11 @@
                   <span class="ribbon" style={`background:${resolveColor(card.color)}`}></span>
                 {/if}
                 <span class="card-name">{FR_CARDS[card.cardName]}</span>
-                <span class="card-points">{getCardUnitPoints(card.cardName)}</span>
+
+                {#if !forestScanState.openModalScan} <!-- On affiche pas les points si c'est le modal de scan-->
+                  <span class="card-points">{getCardUnitPoints(card.cardName)}</span>
+                {/if}
+
               </div>
             {/each}
           </div>
@@ -161,7 +178,10 @@
                 <span class="ribbon" style={`background:${resolveColor(card.color)}`}></span>
               {/if}
               <span class="card-name">{FR_CARDS[card.cardName]}</span>
-              <span class="card-points">{getCardUnitPoints(card.cardName)}</span>
+
+              {#if !forestScanState.openModalScan} <!-- On affiche pas les points si c'est le modal de scan-->
+                <span class="card-points">{getCardUnitPoints(card.cardName)}</span>
+              {/if}
             </div>
           {/each}
         </div>

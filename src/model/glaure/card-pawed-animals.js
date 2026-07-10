@@ -229,3 +229,7 @@ export const sable = {
 
 export const allPawed = [hedgehog, mole, beechMarten, brownBear, europeanBadger, europeanFatDormouse, europeanHare, lynx, raccoon, redFox, wolf, alpineMarmot, mountainHare, waterVole, europeanWildcat, europeanPolecat, meeps, troll,
     genet, redPanda, arcticFox, sable]
+
+export const allPawedRestrictive = [hedgehog, mole, beechMarten, brownBear, europeanBadger, europeanFatDormouse, europeanHare, lynx, raccoon, redFox, wolf, alpineMarmot, mountainHare, waterVole, europeanWildcat, europeanPolecat, troll,
+    genet, redPanda, arcticFox, sable]
+//J'ai enlevé meeps qui faisait redondant avec troll.

@@ -45,7 +45,7 @@ export const TreeColor = {
   "downyBirch" : "vert-clair",
   "moorBirch" : "vert-clair",
   "turkeyOak" : "marron",
-  "oChristmasTree" : "marron",
+  "oChristmasTree" : "bleu",
   
 }
 /**

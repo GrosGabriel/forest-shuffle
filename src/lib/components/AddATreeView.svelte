@@ -1,6 +1,7 @@
 <script>
     import { useRealForestState } from "$lib/states/realForestState.svelte.js";
     import { usePlayerState } from "$lib/states/playerState.svelte.js";
+    import { useForestScanState } from "$lib/states/forestScanState.svelte.js";
 
     import cards from "../../model/glaure/cards.js";
     import { FR_CARDS } from "$lib/i18n/fr-cards";
@@ -8,7 +9,7 @@
 
     const realForestState = useRealForestState();
     const playerState = usePlayerState();
-
+    const forestScanState = useForestScanState();
 
     let openModalNewTree = $state(false);
 
@@ -29,7 +30,18 @@
         <h3>Choisissez la base</h3>
         
         {#each bases as base}
-        <button class="tree-selector" onclick={() => {openModalNewTree = false; realForestState.addTree(playerState.player, base.name); }}>
+        <button class="tree-selector" onclick={() => {
+            openModalNewTree = false; 
+            if (forestScanState.openModalScan) {
+                // On est sur la forêt scannée, on ajoute l'arbre à la forêt scannée
+                forestScanState.addTree(base.name);
+            } else {
+                // On est sur la forêt réelle, on ajoute l'arbre à la forêt réelle
+                realForestState.addTree(playerState.player, base.name); 
+            }
+
+            
+            }}>
             {FR_CARDS[base.name]}
         </button>
         {/each}

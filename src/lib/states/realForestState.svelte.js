@@ -34,6 +34,10 @@ la realForest  a la forme
 
 */
 
+function renamePlayerInTheForest(f, name) {
+    f.playername = name;
+};
+
 const useRealForestState = () => {
     return {
         get realForest() {
@@ -150,6 +154,16 @@ const useRealForestState = () => {
 
         deleteTree(playerName, treeId) {
             realForestState[playerName].forest = realForestState[playerName].forest.filter(tree => tree.id !== treeId) 
+        },
+
+        mergeForest(playerName, additionnalForest) {
+            if (!(playerName in realForestState)) {
+                return;
+            }
+
+            const existingForest = realForestState[playerName].forest;
+            const mergedForest = [...existingForest, ...additionnalForest.forest];
+            realForestState[playerName].forest = mergedForest;
         },
     }
 }

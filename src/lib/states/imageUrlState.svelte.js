@@ -3,6 +3,17 @@
 
 let imageUrlState = $state({});
 
+/*
+la imageUrlState a la forme : 
+
+{
+playerName: imageUrl,
+
+}
+
+
+*/
+
 const useImageUrlState = () => {
     return {
         get imageUrl() {
