@@ -147,6 +147,9 @@
 
                 <button class="card-delete"
                 onclick={() => {
+                    if (canOnlyAddButterfly(treeModifState.treeToModif) && cardModifState.sideCardToModif == "down") {
+                        treeModifState.resetUpWithFirst();
+                    }
                     treeModifState.deleteCard(cardModifState.cardToModif);
                     cardModifState.cardToModif = null;
                     cardModifState.idCardToModif = null;
@@ -388,7 +391,7 @@
       {/each}
 
       <button class="card-delete" onclick={() => {
-        treeModifState.deleteCard(cardModifState.cardToModif);
+        treeModifState.resetUp();
         cardModifState.cardToModif = null;
         cardModifState.idCardToModif = null;
         cardModifState.onlyBirds = false;

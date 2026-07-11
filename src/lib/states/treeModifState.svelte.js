@@ -38,11 +38,23 @@ const useTreeModifState = () => {
             treeModifState.treeToModif.right = treeModifState.treeToModif.right.map(c => c.id === card.id ? card : c);
         },
 
+
         deleteCard(card) {
             treeModifState.treeToModif.up = treeModifState.treeToModif.up.filter(c => c.id !== card.id);
             treeModifState.treeToModif.down = treeModifState.treeToModif.down.filter(c => c.id !== card.id);
             treeModifState.treeToModif.left = treeModifState.treeToModif.left.filter(c => c.id !== card.id);
             treeModifState.treeToModif.right = treeModifState.treeToModif.right.filter(c => c.id !== card.id);
+        },
+
+        resetUp() {
+            treeModifState.treeToModif.up = [];
+        },
+        resetUpWithFirst() {
+            if (treeModifState.treeToModif.up.length == 0) {
+                return ;
+            } else {
+                treeModifState.treeToModif.up = [treeModifState.treeToModif.up[0]];
+            }
         },
 
         addCard(position, card) {
