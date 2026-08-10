@@ -7,14 +7,53 @@ let sessionLoading = false
 
 
 
+// iOS/iPadOS a une implémentation WebGPU encore expérimentale dans Safari : plutôt que de lever
+// une erreur JS propre, l'inférence peut planter le contexte GPU (donc rien à rattraper avec un
+// simple try/catch). On évite le problème en n'essayant jamais webgpu sur ces appareils.
+function isIOS(): boolean {
+  if (typeof navigator === 'undefined') return false
+  const ua = navigator.userAgent
+  const isAppleMobile = /iPad|iPhone|iPod/.test(ua)
+  // iPadOS 13+ se déclare "Macintosh" dans l'UA, on le distingue via le support tactile
+  const isIPadOS = ua.includes('Macintosh') && navigator.maxTouchPoints > 1
+  return isAppleMobile || isIPadOS
+}
+
+function getExecutionProviders(): ort.InferenceSession.ExecutionProviderConfig[] {
+  return isIOS() ? ['webgl', 'wasm'] : ['webgpu', 'webgl', 'wasm']
+}
+
+// Crée la session ET fait le warmup en un seul essai : un backend "créé" avec succès peut quand
+// même planter à la première exécution réelle (c'est le cas vécu avec webgpu sur iOS), donc on ne
+// considère un backend comme valide qu'une fois le warmup passé.
+async function createAndWarmup(modelUrl: string, providers: ort.InferenceSession.ExecutionProviderConfig[]) {
+  const candidate = await ort.InferenceSession.create(modelUrl, { executionProviders: providers })
+  await warmup(candidate)
+  return candidate
+}
+
 export async function getSession() {
   if (!session && !sessionLoading) {
     sessionLoading = true
-    session = await ort.InferenceSession.create(
-    `${import.meta.env.BASE_URL}/best.onnx`, // besoin de /best.onnx pour gh pages
-    { executionProviders: ['webgpu', 'webgl', 'wasm'] }); // order de priorité : WebGPU → WebGL → WASM
+    const modelUrl = `${import.meta.env.BASE_URL}/best.onnx` // besoin de /best.onnx pour gh pages
+    const providers = getExecutionProviders() // ordre de priorité selon la plateforme
 
-    await warmup(session) // compilation shaders absorbée ici
+    try {
+      session = await createAndWarmup(modelUrl, providers)
+    } catch (e) {
+      // Filet de sécurité si le backend choisi échoue (création ou premier run) :
+      // wasm est le backend le plus universel, on retente avec lui seul avant d'abandonner.
+      console.error('Échec session avec', providers, e)
+      try {
+        session = await createAndWarmup(modelUrl, ['wasm'])
+      } catch (e2) {
+        // Même wasm échoue : on réinitialise l'état pour ne pas bloquer indéfiniment les appelants
+        // (sinon la boucle d'attente ci-dessous tournerait pour toujours) et on relaie l'erreur.
+        sessionLoading = false
+        session = null
+        throw e2
+      }
+    }
   }
 
   while (!sessionReady) {
