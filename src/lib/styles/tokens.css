@@ -56,6 +56,10 @@ body {
   font-family: var(--font-body);
   margin: 0;
   -webkit-font-smoothing: antialiased;
+  /* Désactive le double-tap-pour-zoomer (gênant sur les boutons tapés
+     rapidement, ex. +/- de la grotte) sans désactiver le pincer-zoomer,
+     qui reste nécessaire pour l'accessibilité. */
+  touch-action: manipulation;
 }
 
 @media (prefers-reduced-motion: reduce) {

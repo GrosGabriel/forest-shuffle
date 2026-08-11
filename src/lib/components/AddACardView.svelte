@@ -667,7 +667,7 @@
        que ForestView.svelte). */
     overflow-x: auto;
 
-    --tree-w: 140px;
+    --tree-w: 100px;
     --tree-h: calc(var(--tree-w) * 7 / 5);
   }
 

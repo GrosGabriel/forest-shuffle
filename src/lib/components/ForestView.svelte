@@ -208,7 +208,7 @@
     font-family: 'DM Mono', monospace;
     background: linear-gradient(180deg, #ffffff 0%, #f5f7f2 100%);
     /* min-height: 100vh; */
-    padding: 2.5rem 2rem;
+    padding: 1.25rem 1rem;
     color: #374151;
 
     /* Si un arbre a beaucoup de cartes d'un côté, tout l'affichage de la forêt
@@ -216,7 +216,7 @@
        de la page — l'agencement des arbres/cartes ne change pas. */
     overflow-x: auto;
 
-    --tree-w: 140px;
+    --tree-w: 68px;
     --tree-h: calc(var(--tree-w) * 7 / 5);
   }
 
@@ -245,13 +245,15 @@
        que de centrer — sinon la partie qui dépasserait "avant" le centre
        devient inaccessible au scroll (impossible de scroller en négatif). */
     justify-content: safe center;
-    gap: 1rem;
+    gap: 0.5rem;
     align-items: flex-end;
   }
 
 
   .card-points {
   font-family: 'DM Sans', sans-serif; /* ou Inter, system-ui… */
+  font-size: calc(var(--tree-w) * 0.12);
+  line-height: 1;
   }
 
   .card-row {
@@ -280,6 +282,8 @@
     border: 1.5px solid #d5dbe0;
     border-radius: 6px;
     display: flex;
+    flex-direction: column;
+    gap: 2px;
     align-items: center;
     justify-content: center;
     padding: 6px 10px;
@@ -299,6 +303,8 @@
     border: 1.5px solid #d5dbe0;
     border-radius: 6px;
     display: flex;
+    flex-direction: column;
+    gap: 2px;
     align-items: center;
     justify-content: center;
     padding: 8px 6px;
@@ -316,8 +322,10 @@
   */
 
   .card-name {
-    font-size: 0.58rem;
-    line-height: 1.3;
+    /* Proportionnel à --tree-w plutôt qu'une taille fixe, pour rester lisible
+       mais compact quel que soit la taille de carte choisie. */
+    font-size: calc(var(--tree-w) * 0.070);
+    line-height: 1.15;
     text-align: center;
     color: #3f4a51;
     word-break: break-word;
@@ -425,13 +433,15 @@
 }
 
   .tree-icon {
-    font-size: 1.8rem;
+    /* Proportionnel à la taille de l'arbre plutôt qu'une taille fixe, pour
+       rester bien proportionné si --tree-w change. */
+    font-size: calc(var(--tree-w) * 0.3);
     line-height: 1;
   }
 
   .tree-name {
     font-family: 'Playfair Display', serif;
-    font-size: 0.95rem;
+    font-size: calc(var(--tree-w) * 0.12);
     font-weight: 600;
     color: #38513a;
     text-align: center;

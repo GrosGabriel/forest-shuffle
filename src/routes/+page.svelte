@@ -254,7 +254,7 @@ async function rotateAndStore() {
 <!-- Boutons flottants fixes en bas d'écran -->
 <div class="bottom-ribbon">
   <div class="fab-row">
-    <AddATreeView floating={true} />
+    <AddATreeView floating={true} label="+ arbre" />
 
     <label class="fab scan-button">
       Charger un bout de forêt

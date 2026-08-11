@@ -97,19 +97,20 @@
 .fab {
   font-family: var(--font-body);
   font-weight: 700;
-  font-size: 0.95rem;
+  font-size: 0.8rem;
   color: #fbfff6;
   background: var(--forest);
   border: none;
   border-radius: 999px;
-  padding: 0.85rem 1.5rem;
-  min-height: 48px;
+  padding: 0.65rem 1.1rem;
+  min-height: 44px;
   display: inline-flex;
   align-items: center;
-  gap: 0.55rem;
+  gap: 0.4rem;
   box-shadow: 0 14px 30px -12px hsl(var(--shadow-color) / 0.6);
   cursor: pointer;
   transition: transform 0.12s ease, background 0.15s ease;
+  white-space: nowrap;
 }
 .fab:hover {
   background: var(--forest-hover);
