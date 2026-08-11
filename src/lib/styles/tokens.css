@@ -1,0 +1,66 @@
+/* Design tokens partagés par toute l'app : palette, typo, rayons, ombres.
+   Repris de la proposition de design (boutons + menu), et alignés sur les
+   couleurs déjà utilisées pour les cartes dans foretStyle.js. */
+
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap');
+
+/* Réinitialisation universelle : padding et bordure inclus dans width/height,
+   plutôt que rajoutés par-dessus (évite les débordements horizontaux type
+   ".bottom-ribbon" qui dépassait de la largeur de son padding). */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+:root {
+  --surface: #faf8f1;
+  --surface-raised: #ffffff;
+  --surface-sunken: #f1efe6;
+  --ink: #2f3b2a;
+  --ink-soft: #5c665a;
+  --ink-faint: #8a9184;
+  --border: #dbe0d2;
+  --border-strong: #c3cbb6;
+
+  --forest: #4f8247;
+  --forest-hover: #436e3c;
+  --forest-tint: #c7e3b5;
+  --forest-tint-soft: #e4f0da;
+
+  --bark: #8a5a34;
+  --bark-hover: #74492a;
+  --bark-tint: #f1e3d5;
+
+  --danger: #b3564c;
+  --danger-hover: #984740;
+  --danger-tint: #f6e3e0;
+
+  --gold: #b98a2e;
+  --gold-tint: #f3e5c4;
+
+  --shadow-color: 220 20% 20%;
+  --radius-card: 14px;
+  --radius-btn: 10px;
+
+  --font-display: 'Playfair Display', Georgia, serif;
+  --font-body: 'DM Sans', system-ui, sans-serif;
+  /* Space Mono plutôt que DM Mono : même esprit "carnet de terrain", mais un zéro
+     ovale plein au lieu d'un zéro barré. */
+  --font-mono: 'Space Mono', ui-monospace, monospace;
+}
+
+body {
+  background: var(--surface);
+  color: var(--ink);
+  font-family: var(--font-body);
+  margin: 0;
+  -webkit-font-smoothing: antialiased;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
+    animation: none !important;
+  }
+}

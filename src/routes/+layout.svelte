@@ -2,6 +2,9 @@
 	import favicon from '$lib/assets/favicon.svg';
 	import { onMount } from "svelte";
 
+	import '$lib/styles/tokens.css';
+	import '$lib/styles/buttons.css';
+
 	import { getSession } from "$lib/detection/yolo"
 
 	let { children } = $props();

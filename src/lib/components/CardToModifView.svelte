@@ -108,7 +108,7 @@
             <h3>Choisissez la base</h3>
             
             {#each bases as base}
-            <button class="tree-selector" onclick={() => {
+            <button class="btn btn-secondary option-item" onclick={() => {
                         treeModifState.treeToModif.tree = base.name ;
                         treeModifState.treeToModif.symbol = TreeColor[base.name] ?? "none";
                         cardModifState.validated = true;
@@ -133,7 +133,7 @@
         <div class="modal-content">
             <h3>Choisissez la carte</h3>
                 {#each cardsPossibles(cardModifState.cardToModif?.cardName) as card}
-                <button class = "card-selector" onclick={() => {
+                <button class="btn btn-secondary option-item" onclick={() => {
                         cardModifState.cardToModif.cardName = card.name;
                         cardModifState.cardToModif.color = "none" //TODO gérer les couleurs des cartes (actuellement on perd l'info de la couleur quand on modifie une carte)
                         cardModifState.validated = true;
@@ -145,7 +145,7 @@
 
                 {/each}
 
-                <button class="card-delete"
+                <button class="btn btn-danger option-item"
                 onclick={() => {
                     if (canOnlyAddButterfly(treeModifState.treeToModif) && cardModifState.sideCardToModif == "down") {
                         treeModifState.resetUpWithFirst();
@@ -167,7 +167,7 @@
         <div class="modal-content">
             <h3>Choisissez le papillon</h3>
             {#each papillonCards() as card}
-                <button class = "card-selector" onclick={() => {
+                <button class="btn btn-secondary option-item" onclick={() => {
                         cardModifState.cardToModif.cardName = card.name;
                         cardModifState.cardToModif.color = "none" //TODO gérer les couleurs des cartes (actuellement on perd l'info de la couleur quand on modifie une carte)
                         treeModifState.updateCard(cardModifState.cardToModif);
@@ -181,7 +181,7 @@
                 </button>
             {/each}
 
-            <button class="card-delete"
+            <button class="btn btn-danger option-item"
                 onclick={() => {
                     treeModifState.deleteCard(cardModifState.cardToModif);
                     cardModifState.cardToModif = null;
@@ -204,7 +204,7 @@
         <div class="modal-content">
             <h3>Choisissez le coucou</h3>
             {#each coucouCards() as card}
-                <button class = "card-selector" onclick={() => {
+                <button class="btn btn-secondary option-item" onclick={() => {
                         cardModifState.cardToModif.cardName = card.name;
                         cardModifState.cardToModif.color = "vert-clair";
                         treeModifState.updateCard(cardModifState.cardToModif);
@@ -217,7 +217,7 @@
                 </button>
             {/each}
 
-            <button class="card-delete"
+            <button class="btn btn-danger option-item"
                 onclick={() => {
                     treeModifState.deleteCard(cardModifState.cardToModif);
                     cardModifState.cardToModif = null;
@@ -240,7 +240,7 @@
         <div class="modal-content">
             <h3>Choisissez le lièvre</h3>
             {#each lievreCards() as card}
-                <button class = "card-selector" onclick={() => {
+                <button class="btn btn-secondary option-item" onclick={() => {
                         cardModifState.cardToModif.cardName = card.name;
                         cardModifState.cardToModif.color = "none" //TODO gérer les couleurs des cartes (actuellement on perd l'info de la couleur quand on modifie une carte)
                         treeModifState.updateCard(cardModifState.cardToModif);
@@ -254,7 +254,7 @@
                 </button>
             {/each}
 
-            <button class="card-delete"
+            <button class="btn btn-danger option-item"
                 onclick={() => {
                     treeModifState.deleteCard(cardModifState.cardToModif);
                     cardModifState.cardToModif = null;
@@ -278,7 +278,7 @@
         <div class="modal-content">
             <h3>Choisissez la carte</h3>
             {#each crapaudCommunCards() as card}
-                <button class = "card-selector" onclick={() => {
+                <button class="btn btn-secondary option-item" onclick={() => {
                         cardModifState.cardToModif.cardName = card.name;
                         cardModifState.cardToModif.color = "none" //TODO gérer les couleurs des cartes (actuellement on perd l'info de la couleur quand on modifie une carte)
                         treeModifState.updateCard(cardModifState.cardToModif);
@@ -291,7 +291,7 @@
                 </button>
             {/each}
 
-            <button class="card-delete"
+            <button class="btn btn-danger option-item"
                 onclick={() => {
                     treeModifState.deleteCard(cardModifState.cardToModif);
                     cardModifState.cardToModif = null;
@@ -315,7 +315,7 @@
         <div class="modal-content">
             <h3>Choisissez la couleur de la carte</h3>
             {#each Object.entries(colorPalette) as [colorName, color]}
-                <button class = "color-selector" style={`background:${resolveColor(colorName)}`} onclick={() => {
+                <button class="color-swatch" style={`background:${resolveColor(colorName)}`} onclick={() => {
                         cardModifState.cardToModif.color = colorName;
                         treeModifState.updateCard(cardModifState.cardToModif);
                         cardModifState.somethingSpecial = false;
@@ -327,7 +327,7 @@
                 </button>
             {/each}
 
-            <button class="card-delete"
+            <button class="btn btn-danger option-item"
                 onclick={() => {
                     cardModifState.cardToModif.color = "none";
                     treeModifState.updateCard(cardModifState.cardToModif);
@@ -347,7 +347,7 @@
         <div class="modal-content">
             <h3>Choisissez la couleur de l'arbre</h3>
             {#each Object.entries(colorPalette) as [colorName, color]}
-                <button class = "color-selector" style={`background:${resolveColor(colorName)}`} onclick={() => {
+                <button class="color-swatch" style={`background:${resolveColor(colorName)}`} onclick={() => {
                         treeModifState.treeToModif.symbol = colorName;
                         cardModifState.somethingSpecial = false;
                         cardModifState.modifyColor = false;
@@ -358,7 +358,7 @@
                 </button>
             {/each}
 
-            <button class="card-delete"
+            <button class="btn btn-danger option-item"
                 onclick={() => {
                     treeModifState.treeToModif.symbol = "none";
                     cardModifState.somethingSpecial = false;
@@ -377,7 +377,7 @@
     <div class="modal-content">
       <h3>Choisissez l'oiseau</h3>
       {#each cards.filter(c => c.symbols.includes("bird") && c.position === "top" && c.name !== "cuckoo") as card}
-        <button class="card-selector" onclick={() => {
+        <button class="btn btn-secondary option-item" onclick={() => {
           cardModifState.cardToModif.cardName = card.name;
           cardModifState.cardToModif.color = "none";
           treeModifState.updateCard(cardModifState.cardToModif);
@@ -390,7 +390,7 @@
         </button>
       {/each}
 
-      <button class="card-delete" onclick={() => {
+      <button class="btn btn-danger option-item" onclick={() => {
         treeModifState.resetUp();
         cardModifState.cardToModif = null;
         cardModifState.idCardToModif = null;
@@ -404,3 +404,44 @@
     </div>
   </div>
 {/if}
+
+<style>
+  .modal-content h3 {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 1.15rem;
+    color: var(--ink);
+    margin: 0 0 1rem;
+  }
+
+  .option-item {
+    width: 100%;
+    justify-content: flex-start;
+    text-align: left;
+    margin-bottom: 0.5rem;
+  }
+
+  /* Nuancier de couleurs de carte : chrome du bouton seulement, la couleur
+     de fond de chaque puce reste pilotée par les données (foretStyle.js). */
+  .color-swatch {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 96px;
+    height: 44px;
+    padding: 0 0.9rem;
+    margin: 0 0.4rem 0.5rem 0;
+    border-radius: var(--radius-btn);
+    border: 1.5px solid rgba(0, 0, 0, 0.15);
+    font-family: var(--font-body);
+    font-weight: 600;
+    font-size: 0.82rem;
+    color: var(--ink);
+    text-shadow: 0 1px 1px rgba(255, 255, 255, 0.5);
+    cursor: pointer;
+    transition: transform 0.12s ease;
+  }
+  .color-swatch:hover {
+    transform: scale(1.05);
+  }
+</style>

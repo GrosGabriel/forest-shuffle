@@ -604,17 +604,17 @@
 </div>
 
 <div class="modal-backdrop">
-    <button onclick={closeModal} class="close-button">Annuler</button>
-    <button onclick={validerModal} class="validate-button">Valider</button>
+    <button onclick={closeModal} class="btn btn-ghost action-cancel">Annuler</button>
+    <button onclick={validerModal} class="btn btn-primary action-validate">Valider</button>
     <button onclick={() => {
         if (forestScanState.openModalScan) {
             // On est sur la forêt scannée, on supprime l'arbre de la forêt scannée
             forestScanState.deleteTree(idTree);
         } else {
             // On est sur la forêt réelle, on supprime l'arbre de la forêt réelle
-            realForestState.deleteTree(playerState.player, treeModifState.idTreeToModif); 
+            realForestState.deleteTree(playerState.player, treeModifState.idTreeToModif);
         }
-        closeModal();}} class="delete-tree-button"
+        closeModal();}} class="btn btn-danger action-delete"
         >
         Supprimer l'arbre
     </button>
@@ -653,12 +653,7 @@
 
 
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=DM+Mono:wght@400;500&display=swap');
-
-  :global(body) {
-    background: #ffffff;
-    margin: 0;
-  }
+  /* Polices chargées globalement via $lib/styles/tokens.css */
 
   .forest-root {
     font-family: 'DM Mono', monospace;
@@ -666,6 +661,11 @@
     /* min-height: 100vh; */
     padding: 2.5rem 2rem;
     color: #374151;
+
+    /* Si l'arbre a beaucoup de cartes d'un côté, l'éditeur défile horizontalement
+       sur lui-même plutôt que de déborder de la modale (même filet de sécurité
+       que ForestView.svelte). */
+    overflow-x: auto;
 
     --tree-w: 140px;
     --tree-h: calc(var(--tree-w) * 7 / 5);
@@ -679,7 +679,7 @@
         "left   tree   right"
         ".      bottom .";
     grid-template-columns: max-content var(--tree-w) max-content;
-    grid-template-rows: auto var(--tree-h) auto;
+    grid-template-rows: auto minmax(var(--tree-h), auto) auto;
     align-items: center;
     justify-items: center;
     gap: 6px;
@@ -898,12 +898,40 @@
   align-items: center; 
 }
 
-.card-col.col-right { 
-  grid-area: right;  
-  display: flex; 
-  flex-direction: row;    
-  gap: 6px; 
-  align-items: center; 
+.card-col.col-right {
+  grid-area: right;
+  display: flex;
+  flex-direction: row;
+  gap: 6px;
+  align-items: center;
+}
+
+/* Rangée d'actions sous l'éditeur d'arbre — ne touche pas au visuel des cartes/arbres ci-dessus */
+.modal-backdrop {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 0.4rem;
+  padding: 1rem 0 0;
+}
+
+/* Les 3 boutons se partagent la largeur pour tenir sur une seule ligne,
+   même dans une modale étroite sur mobile — "Annuler" est secondaire donc
+   plus compact, "Supprimer l'arbre" a le texte le plus long donc plus de place. */
+.modal-backdrop .btn {
+  min-width: 0;
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+  font-size: 0.82rem;
+  white-space: nowrap;
+}
+.action-cancel {
+  flex: 0.7 1 0;
+}
+.action-validate {
+  flex: 1 1 0;
+}
+.action-delete {
+  flex: 1.3 1 0;
 }
 
 </style>

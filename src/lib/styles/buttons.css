@@ -1,0 +1,131 @@
+/* Système de boutons partagé — 4 niveaux plutôt qu'un bouton HTML par
+   défaut pour tout : la couleur indique l'importance de l'action.
+   Cible tactile ≥ 44px partout pour un usage mobile à une main. */
+
+.btn {
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 0.92rem;
+  border-radius: var(--radius-btn);
+  padding: 0.72rem 1.15rem;
+  min-height: 46px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  border: 1.5px solid transparent;
+  transition: transform 0.12s ease, background 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+  -webkit-tap-highlight-color: transparent;
+  box-sizing: border-box;
+}
+
+.btn:active {
+  transform: scale(0.97);
+}
+
+.btn:focus-visible {
+  outline: 2px solid var(--forest);
+  outline-offset: 2px;
+}
+
+.btn-primary {
+  background: var(--forest);
+  color: #fbfff6;
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.06), 0 8px 18px -10px hsl(var(--shadow-color) / 0.55);
+}
+.btn-primary:hover {
+  background: var(--forest-hover);
+}
+
+.btn-secondary {
+  background: var(--surface-raised);
+  color: var(--bark);
+  border-color: var(--bark);
+}
+.btn-secondary:hover {
+  background: var(--bark-tint);
+}
+
+.btn-ghost {
+  background: transparent;
+  color: var(--ink-soft);
+  border-color: transparent;
+  font-weight: 500;
+  padding-left: 0.4rem;
+  padding-right: 0.4rem;
+  min-height: 40px;
+}
+.btn-ghost:hover {
+  color: var(--ink);
+  background: var(--surface-sunken);
+}
+
+.btn-danger {
+  background: var(--danger-tint);
+  color: var(--danger-hover);
+  border-color: var(--danger);
+}
+.btn-danger:hover {
+  background: var(--danger);
+  color: #fff9f7;
+}
+
+.btn-icon {
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border-radius: 50%;
+  background: var(--surface-raised);
+  border-color: var(--border-strong);
+  color: var(--ink-soft);
+  font-size: 1.05rem;
+}
+.btn-icon:hover {
+  color: var(--ink);
+  border-color: var(--ink-faint);
+}
+
+.btn[disabled] {
+  opacity: 0.42;
+  cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
+}
+
+/* Bouton flottant (FAB) — utilisé pour l'action de scan en bas d'écran */
+.fab {
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: #fbfff6;
+  background: var(--forest);
+  border: none;
+  border-radius: 999px;
+  padding: 0.85rem 1.5rem;
+  min-height: 48px;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  box-shadow: 0 14px 30px -12px hsl(var(--shadow-color) / 0.6);
+  cursor: pointer;
+  transition: transform 0.12s ease, background 0.15s ease;
+}
+.fab:hover {
+  background: var(--forest-hover);
+}
+.fab:active {
+  transform: scale(0.97);
+}
+
+/* Variante pour une action flottante secondaire, à côté du FAB principal
+   (ex : "Ajouter un arbre" à côté de "Charger un bout de forêt") */
+.fab-secondary {
+  background: var(--surface-raised);
+  color: var(--bark);
+  border: 1.5px solid var(--bark);
+  box-shadow: 0 10px 24px -14px hsl(var(--shadow-color) / 0.5);
+}
+.fab-secondary:hover {
+  background: var(--bark-tint);
+}

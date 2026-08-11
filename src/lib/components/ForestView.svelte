@@ -202,12 +202,7 @@
 </Modal>
 
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=DM+Mono:wght@400;500&display=swap');
-
-  :global(body) {
-    background: #ffffff;
-    margin: 0;
-  }
+  /* Polices chargées globalement via $lib/styles/tokens.css */
 
   .forest-root {
     font-family: 'DM Mono', monospace;
@@ -215,6 +210,11 @@
     /* min-height: 100vh; */
     padding: 2.5rem 2rem;
     color: #374151;
+
+    /* Si un arbre a beaucoup de cartes d'un côté, tout l'affichage de la forêt
+       défile horizontalement sur lui-même plutôt que de déborder sur le reste
+       de la page — l'agencement des arbres/cartes ne change pas. */
+    overflow-x: auto;
 
     --tree-w: 140px;
     --tree-h: calc(var(--tree-w) * 7 / 5);
@@ -228,7 +228,10 @@
         "left   tree   right"
         ".      bottom .";
     grid-template-columns: max-content var(--tree-w) max-content;
-    grid-template-rows: auto var(--tree-h) auto;
+    /* minmax plutôt qu'une hauteur figée : si beaucoup de cartes s'empilent à
+       gauche/droite d'un arbre, la ligne grandit pour les contenir au lieu de
+       les laisser déborder par-dessus le reste de l'affichage. */
+    grid-template-rows: auto minmax(var(--tree-h), auto) auto;
     align-items: center;
     justify-items: center;
     gap: 6px;
@@ -237,7 +240,12 @@
   .trees-row {
     display: flex;
     flex-wrap: wrap;
-    gap: 3.5rem;
+    /* "safe" : centre normalement, mais si le contenu déborde de .forest-root
+       (overflow-x: auto plus haut), retombe sur un alignement au début plutôt
+       que de centrer — sinon la partie qui dépasserait "avant" le centre
+       devient inaccessible au scroll (impossible de scroller en négatif). */
+    justify-content: safe center;
+    gap: 1rem;
     align-items: flex-end;
   }
 
@@ -285,6 +293,7 @@
   .card-col .card {
     position: relative;
     width: calc(var(--tree-w) / 2);
+    flex-shrink: 0; /* garde sa largeur plutôt que de se compresser quand la colonne défile */
     height: var(--tree-h);
     background: #eef1f2;
     border: 1.5px solid #d5dbe0;

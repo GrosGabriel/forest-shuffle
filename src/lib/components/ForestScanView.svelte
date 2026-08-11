@@ -30,13 +30,70 @@
 
 </script>
 
-<AddATreeView />
-
-<ForestView forest={forestScanState.forestScan.forest} />
-
-
-<div class="modal-backdrop">
-    <button onclick={closeModal} class="close-button">Annuler le scan</button>
-    <button onclick={validerModal} class="validate-button">Valider et merge</button>
+<div class="scan-shell">
+    <ForestView forest={forestScanState.forestScan.forest} />
 </div>
+
+<div class="sticky-actions">
+    <div class="modal-backdrop">
+        <AddATreeView label="+ arbre" />
+        <button onclick={closeModal} class="btn btn-ghost">Annuler le scan</button>
+        <button onclick={validerModal} class="btn btn-primary">Valider et merge</button>
+    </div>
+</div>
+
+<style>
+    /* Le <dialog> s'auto-dimensionne à son contenu : avec seulement un
+       max-width, s'il n'y a qu'un ou deux petits arbres, rien ne force le
+       dialog à être plus large qu'eux, donc rien à centrer autour et rien
+       pour les laisser tenir sur la même ligne. On demande explicitement une
+       largeur (pas juste un plafond) pour que le dialog grandisse en
+       conséquence. La forêt reste alignée à gauche à l'intérieur de cette
+       colonne (les arbres ne sont pas centrés un par un), mais la colonne
+       elle-même se centre dans le dialog. */
+    .scan-shell {
+        width: min(640px, 84vw);
+        margin: 0 auto;
+    }
+
+    /* La modale de scan peut défiler si la forêt scannée est longue (le <dialog>
+       est le conteneur de scroll, via son overflow:auto par défaut) : on garde les
+       actions accrochées en bas plutôt que de devoir scroller jusqu'au bout pour
+       les retrouver. Les marges négatives compensent le padding de .modal-content
+       (défini dans Modal.svelte) pour venir affleurer le bord du dialog une fois
+       collé — ses coins sont naturellement rognés par le border-radius du dialog
+       lui-même. */
+    .sticky-actions {
+        position: sticky;
+        bottom: 0;
+        z-index: 5;
+        background: var(--surface-raised);
+        margin: 1rem -2rem -2rem;
+        padding: 0.75rem 2rem 1.5rem;
+        box-shadow: 0 -8px 12px -8px rgba(0, 0, 0, 0.08);
+    }
+
+    /* Les 3 actions se partagent la largeur pour tenir sur une seule ligne,
+       même dans une modale étroite sur mobile. */
+    .modal-backdrop {
+        display: flex;
+        flex-wrap: nowrap;
+        gap: 0.4rem;
+    }
+    .modal-backdrop :global(.add-a-tree-container) {
+        flex: 0.8 1 0;
+        min-width: 0;
+    }
+    .modal-backdrop :global(.add-tree-trigger) {
+        width: 100%;
+    }
+    .modal-backdrop .btn {
+        flex: 1 1 0;
+        min-width: 0;
+        padding-left: 0.5rem;
+        padding-right: 0.5rem;
+        font-size: 0.82rem;
+        white-space: nowrap;
+    }
+</style>
 

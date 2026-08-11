@@ -171,26 +171,25 @@ async function rotateAndStore() {
 
 
 
-<PlayerView />
-
-
-
-
+<div class="page-shell">
+  <PlayerView />
 
 
 <div class="container">
-  <label class="upload-button">
+  <label class="btn btn-primary upload-button">
     Charger un JPG
     <input type="file" accept="image/jpeg,.jpg" capture = "environment" onchange={handleFileChange} />
   </label>
 
   {#if imageUrlState.imageUrl[playerState.player]}
-    <img src={imageUrlState.imageUrl[playerState.player]} alt="Preview" width="640" height="640" style="object-fit:contain; display:block;" />
+    <img src={imageUrlState.imageUrl[playerState.player]} alt="Preview" width="640" height="640" class="upload-preview" />
 
-    <button onclick={rotateAndStore} disabled={loading}>
-      🔄 Tourner 90° 
-    </button>
-    <button onclick={validerImage} disabled={loading}>Valider (prédire la forêt)</button>
+    <div class="action-row">
+      <button class="btn btn-secondary" onclick={rotateAndStore} disabled={loading}>
+        Tourner 90°
+      </button>
+      <button class="btn btn-primary" onclick={validerImage} disabled={loading}>Valider (prédire la forêt)</button>
+    </div>
   {/if}
 
   {#if loading}
@@ -243,49 +242,108 @@ async function rotateAndStore() {
 
   <CaveView />
 
-  <AddATreeView />
-
   {#if realForestState.realForest[playerState.player]?.forest.length > 0}
 
   <ForestView forest={realForestState.realForest[playerState.player] ? realForestState.realForest[playerState.player].forest : []} />
 
   {/if}
+  </div>
 </div>
 
 
-<!-- Ruban fixe en bas d'écran -->
+<!-- Boutons flottants fixes en bas d'écran -->
 <div class="bottom-ribbon">
-  <label class="upload-button scan-button">
-    📷 Charger un bout de forêt
-    <input type="file" accept="image/jpeg,.jpg" capture="environment" onchange={handleScanChange} />
-  </label>
+  <div class="fab-row">
+    <AddATreeView floating={true} />
+
+    <label class="fab scan-button">
+      Charger un bout de forêt
+      <input type="file" accept="image/jpeg,.jpg" capture="environment" onchange={handleScanChange} />
+    </label>
+  </div>
 </div>
 
 <style>
+
+  /* Les <label> font office de bouton ; l'input file natif reste présent
+     pour l'accessibilité/le clic mais n'a pas à s'afficher lui-même. */
+  .upload-button input[type="file"],
+  .scan-button input[type="file"] {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  /* Aperçu de la photo chargée : un petit rectangle juste pour vérifier le
+     cadrage avant de tourner/valider, pas une pleine page (640x640 natif avant).
+     Pas de aspect-ratio forcé : la photo garde ses proportions réelles plutôt
+     que d'être plaquée dans un carré avec des bandes vides. */
+  .upload-preview {
+    display: block;
+    width: auto;
+    height: auto;
+    max-width: 140px;
+    max-height: 140px;
+    object-fit: contain;
+    margin: 0.75rem 0;
+    border-radius: var(--radius-btn);
+    border: 1px solid var(--border);
+    background: var(--surface-sunken);
+  }
+
+  .action-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    margin: 0.75rem 0;
+  }
 
   .bottom-ribbon {
     position: fixed;
     bottom: 0;
     left: 0;
     width: 100%;
-    background: white;
-    border-top: 1px solid #ddd;
-    box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.1);
-    padding: 0.75rem 1rem;
     display: flex;
     justify-content: center;
+    padding: 0.9rem 1rem calc(0.9rem + env(safe-area-inset-bottom));
+    pointer-events: none; /* seule la rangée de boutons doit être cliquable, pas toute la bande */
     z-index: 100; /* pour rester au-dessus du contenu et sous les modales éventuelles */
   }
 
-  .scan-button {
-    width: 100%;
-    max-width: 400px;
-    text-align: center;
+  .fab-row {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.6rem;
+    pointer-events: auto;
   }
 
-  /* Évite que le contenu principal soit caché sous le ruban */
+  /* Évite que le contenu principal soit caché sous le bouton flottant */
   .container {
-    padding-bottom: 4.5rem; /* ajuste selon la hauteur réelle du ruban */
+    padding-bottom: 5rem;
+  }
+
+  /* Colonne partagée : sur un écran large, tout le contenu (menu joueurs,
+     boutons, grotte, arbres) reste groupé et aligné à gauche à l'intérieur —
+     PAS centré élément par élément — mais la colonne elle-même est centrée
+     sur la page, pour rester alignée avec le ruban de boutons du bas. */
+  .page-shell {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 0 1rem;
+  }
+
+  /* Même largeur que .page-shell pour que les boutons flottants restent
+     alignés avec le contenu au-dessus, plutôt que centrés sur tout l'écran. */
+  .fab-row {
+    max-width: 720px;
+    width: 100%;
   }
 </style>
 

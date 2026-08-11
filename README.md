@@ -17,8 +17,5 @@ Everything works in the browser, there is no need for a server.
 
 I plan to :
 - Add a better UI design
-- Optimize the YOLO model (possibly make it through a server)
+- Optimize the YOLO model to make it possible to only have to take 1 picture of the full gameboard
 - Create accounts and database to save previous games (+qrcode to share forest between players in the same game)
-- ~~Enhance the way to take a picture of the forest: instead of taking one picture of the full forest, permits multiple smaller ones~~ (done)
-
-If you know how to make (or already have done) a better YOLO model with all cards for every extensions, please share it with me !
