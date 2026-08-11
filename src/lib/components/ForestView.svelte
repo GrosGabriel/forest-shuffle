@@ -234,7 +234,7 @@
     grid-template-rows: auto minmax(var(--tree-h), auto) auto;
     align-items: center;
     justify-items: center;
-    gap: 6px;
+    gap: 1px;
   }
 
   .trees-row {
@@ -286,7 +286,7 @@
     gap: 2px;
     align-items: center;
     justify-content: center;
-    padding: 6px 10px;
+    padding: 3px 4px;
     box-sizing: border-box;
     overflow: hidden;
     transition: border-color 0.2s, transform 0.15s;
@@ -307,7 +307,7 @@
     gap: 2px;
     align-items: center;
     justify-content: center;
-    padding: 8px 6px;
+    padding: 4px 3px;
     box-sizing: border-box;
     overflow: hidden;
     transition: border-color 0.2s, transform 0.15s;
