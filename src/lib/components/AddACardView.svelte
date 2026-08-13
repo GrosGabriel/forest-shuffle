@@ -21,8 +21,6 @@
     let openModalLievreCount = $state(false);
     let lievreCountSide = $state(null); // "left" ou "right" — quel côté est concerné
 
-
-
     const dispatch = createEventDispatcher();
 
     function closeModal() {
@@ -633,7 +631,7 @@
         }
         closeModal();}} class="btn btn-danger action-delete"
         >
-        Supprimer l'arbre
+        Supprimer
     </button>
 </div>
 </div>
@@ -686,12 +684,7 @@
     padding: 2.5rem 2rem;
     color: #374151;
 
-    /* Si l'arbre a beaucoup de cartes d'un côté, l'éditeur défile horizontalement
-       sur lui-même plutôt que de déborder de la modale (même filet de sécurité
-       que ForestView.svelte). */
-    overflow-x: auto;
-
-    --tree-w: 100px;
+    --tree-w: 85px;
     --tree-h: calc(var(--tree-w) * 7 / 5);
   }
 
@@ -702,10 +695,10 @@
         ".      top    ."
         "left   tree   right"
         ".      bottom .";
-    /* Largeur fixe (pas max-content) pour les zones gauche/droite : l'arbre
-       reste toujours exactement au centre de son cluster, qu'il y ait 0 ou
-       10 cartes d'un côté. */
-    grid-template-columns: var(--tree-w) var(--tree-w) var(--tree-w);
+    /* Gauche/droite ne contiennent jamais plus d'une carte visuelle (les
+       piles de Lièvre d'Europe sont affichées comme 1 carte + pastille "+N")
+       : une largeur fixe à la taille d'une carte suffit. */
+    grid-template-columns: calc(var(--tree-w) / 2) var(--tree-w) calc(var(--tree-w) / 2);
     grid-template-rows: auto minmax(var(--tree-h), auto) auto;
     align-items: center;
     justify-items: center;
@@ -715,6 +708,7 @@
   .trees-row {
     display: flex;
     flex-wrap: wrap;
+    justify-content: center;
     gap: 3.5rem;
     align-items: flex-end;
   }
@@ -747,7 +741,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 6px 10px;
+    padding: 1px 10px;
     box-sizing: border-box;
     overflow: hidden;
     transition: border-color 0.2s, transform 0.15s;
@@ -792,8 +786,11 @@
     position: absolute;
     top: 0;
     right: 0;
-    width: 70px; /*18 avant */
-    height: 70px;
+    /* Proportionnel à --tree-w plutôt qu'une taille fixe (70px), sinon le
+       ruban déborde des cartes gauche/droite (moitié moins larges que
+       --tree-w) dès que --tree-w change. */
+    width: calc(var(--tree-w) * 0.5);
+    height: calc(var(--tree-w) * 0.5);
     clip-path: polygon(100% 0, 0 0, 100% 100%);
     border-radius: 0 5px 0 0;
     opacity: 0.92;
@@ -824,21 +821,21 @@
 
   .ribbon-none {
   background: #c7c7c7;
-  width: 70px;
-  height: 70px; /* 28px avant */
+  width: calc(var(--tree-w) * 0.5);
+  height: calc(var(--tree-w) * 0.5);
   display: flex;
   align-items: flex-start;
   justify-content: flex-end;
 }
 
 .ribbon-icon {
-    font-size: 0.5rem;
+    font-size: max(0.5rem, calc(var(--tree-w) * 0.07));
     font-weight: 700;
     color: #e53e3e;
     background: white;
     border-radius: 50%;
-    width: 10px;
-    height: 10px;
+    width: max(10px, calc(var(--tree-w) * 0.14));
+    height: max(10px, calc(var(--tree-w) * 0.14));
     display: flex;
     align-items: center;
     justify-content: center;
@@ -893,8 +890,11 @@
     position: absolute;
     top: 0;
     right: 0;
-    width: 70px;
-    height: 70px; /* 34px avant */
+    /* Proportionnel à --tree-w (la carte arbre fait --tree-w de large en
+       entier, contrairement aux cartes gauche/droite) plutôt qu'une taille
+       fixe. */
+    width: calc(var(--tree-w) * 0.45);
+    height: calc(var(--tree-w) * 0.45);
     clip-path: polygon(100% 0, 0 0, 100% 100%);
     border-radius: 0 8px 0 0;
     opacity: 0.92;
@@ -902,21 +902,21 @@
 
 .tree-ribbon-none {
   background: #c7c7c7;
-  width: 34px;
-  height: 34px;
+  width: calc(var(--tree-w) * 0.45);
+  height: calc(var(--tree-w) * 0.45);
   display: flex;
   align-items: flex-start;
   justify-content: flex-end;
 }
 
 .tree-ribbon-icon {
-  font-size: 0.6rem;
+  font-size: max(0.6rem, calc(var(--tree-w) * 0.1));
   font-weight: 700;
   color: #e53e3e;
   background: white;
   border-radius: 50%;
-  width: 12px;
-  height: 12px;
+  width: max(12px, calc(var(--tree-w) * 0.16));
+  height: max(12px, calc(var(--tree-w) * 0.16));
   display: flex;
   align-items: center;
   justify-content: center;
@@ -931,20 +931,20 @@
   grid-area: top;    
   display: flex; 
   flex-direction: 
-  column; gap: 6px; 
+  column; gap: 2px; 
 }
 
 .card-row.row-down  { 
   grid-area: bottom; 
   display: flex; 
   flex-direction: 
-  column; gap: 6px; 
+  column; gap: 2px; 
 }
 .card-col.col-left  {
   grid-area: left;
   display: flex;
   flex-direction: row;
-  gap: 6px;
+  gap: 2px;
   align-items: center;
   /* Collée contre l'arbre, s'étend vers l'extérieur (la gauche) quand il y a
      plusieurs cartes — pas centrée dans sa case, sinon la moitié des cartes
@@ -956,7 +956,7 @@
   grid-area: right;
   display: flex;
   flex-direction: row;
-  gap: 6px;
+  gap: 2px;
   align-items: center;
   /* Symétrique de col-left : collée contre l'arbre, s'étend vers la droite. */
   justify-self: start;

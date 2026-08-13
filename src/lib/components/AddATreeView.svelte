@@ -85,6 +85,7 @@
         gap: 0.5rem;
         max-height: 60vh;
         overflow-y: auto;
+        padding-right : 0.5rem; /* pour éviter que le scroll ne chevauche le texte */
     }
 
     .option-item {

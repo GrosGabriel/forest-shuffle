@@ -276,15 +276,11 @@
     padding: 1.25rem 1rem;
     color: #374151;
 
-    /* Si un arbre a beaucoup de cartes d'un côté, tout l'affichage de la forêt
-       défile horizontalement sur lui-même plutôt que de déborder sur le reste
-       de la page — l'agencement des arbres/cartes ne change pas. */
-    overflow-x: auto;
-    /* "contain" : une fois arrivé au bord de ce scroll, le geste ne se
-       propage pas à la modale/page englobante (sinon, en scrollant la forêt
-       jusqu'au bout, on continue à "pousser" la modale entière — ce qui
-       donnait l'impression que les boutons bougeaient). */
-    overscroll-behavior-x: contain;
+    /* Plus de scroll horizontal nécessaire : gauche/droite ne contiennent
+       jamais plus d'une carte visuelle (piles de Lièvre d'Europe repliées en
+       "+N", cf. isStacked()), et les arbres nus identiques se regroupent
+       aussi en "+N" (cf. displayGroups) — la largeur du contenu reste donc
+       bornée. */
 
     --tree-w: 68px;
     --tree-h: calc(var(--tree-w) * 7 / 5);
@@ -311,11 +307,7 @@
   .trees-row {
     display: flex;
     flex-wrap: wrap;
-    /* "safe" : centre normalement, mais si le contenu déborde de .forest-root
-       (overflow-x: auto plus haut), retombe sur un alignement au début plutôt
-       que de centrer — sinon la partie qui dépasserait "avant" le centre
-       devient inaccessible au scroll (impossible de scroller en négatif). */
-    justify-content: safe center;
+    justify-content: center;
     gap: 0.5rem;
     align-items: flex-end;
   }
@@ -556,20 +548,20 @@
   grid-area: top;    
   display: flex; 
   flex-direction: 
-  column; gap: 6px; 
+  column; gap: 1px; 
 }
 
 .card-row.row-down  { 
   grid-area: bottom; 
   display: flex; 
   flex-direction: 
-  column; gap: 6px; 
+  column; gap: 1px; 
 }
 .card-col.col-left  {
   grid-area: left;
   display: flex;
   flex-direction: row;
-  gap: 6px;
+  gap: 1px;
   align-items: center;
 }
 
@@ -577,7 +569,7 @@
   grid-area: right;
   display: flex;
   flex-direction: row;
-  gap: 6px;
+  gap: 1px;
   align-items: center;
 }
 
