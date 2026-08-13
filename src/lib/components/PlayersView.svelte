@@ -62,12 +62,12 @@
       <span class="player-ribbon"></span>
       <span class="player-name">{player}</span>
 
-      <div>
-        <div class="player-points">{realForestState.points(player, caveState.caves)}</div>
-        <div class="player-points-label">points</div>
-      </div>
+      <div class="player-footer">
+        <div class="player-points-wrap">
+          <span class="player-points">{realForestState.points(player, caveState.caves)}</span>
+          <span class="player-points-label">points</span>
+        </div>
 
-      <div class="player-actions">
         <button
           class="kebab"
           aria-label="Options pour {player}"
@@ -106,6 +106,13 @@
     overflow-x: auto;
     padding: 0.3rem 0.1rem 0.9rem;
     scrollbar-width: thin;
+    /* Reste visible en scrollant la forêt plus bas — toujours voir qui joue
+       et son score, même arrivé loin dans la page. */
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    background: var(--surface);
+    box-shadow: 0 4px 8px -6px hsl(var(--shadow-color) / 0.35);
   }
 
   .player-card {
@@ -115,10 +122,10 @@
     background: var(--surface-sunken);
     border: 1.5px solid var(--border);
     border-radius: var(--radius-card);
-    padding: 0.85rem 0.8rem 0.75rem;
+    padding: 0.55rem 0.7rem 0.5rem;
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
+    gap: 0.3rem;
     cursor: pointer;
     text-align: left;
     font-family: var(--font-body);
@@ -158,9 +165,24 @@
     line-height: 1.2;
   }
 
+  /* Points + bouton d'options sur une seule ligne (au lieu de 2 blocs
+     empilés) pour garder la carte basse. */
+  .player-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.4rem;
+  }
+
+  .player-points-wrap {
+    display: flex;
+    align-items: baseline;
+    gap: 0.3rem;
+  }
+
   .player-points {
     font-family: var(--font-mono);
-    font-size: 1.3rem;
+    font-size: 1.15rem;
     font-variant-numeric: tabular-nums;
     color: var(--forest);
   }
@@ -176,15 +198,10 @@
     color: var(--ink-faint);
   }
 
-  .player-actions {
-    display: flex;
-    justify-content: flex-end;
-    margin-top: 0.1rem;
-  }
-
   .kebab {
-    width: 26px;
-    height: 26px;
+    flex-shrink: 0;
+    width: 22px;
+    height: 22px;
     border-radius: 50%;
     border: none;
     background: transparent;

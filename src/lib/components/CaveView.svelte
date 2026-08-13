@@ -45,8 +45,8 @@ let caveCount = $derived(caveState.caves[playerState.player]?.count ?? 0);
     background: var(--bark-tint);
     border: 1px solid var(--border);
     border-radius: var(--radius-card);
-    padding: 1rem 1.2rem 1rem 1.5rem;
-    margin: 1rem 0;
+    padding: 0.5rem 1.2rem 0.5rem 1.5rem;
+    margin: 0.6rem 0;
     overflow: hidden;
   }
 
@@ -60,13 +60,17 @@ let caveCount = $derived(caveState.caves[playerState.player]?.count ?? 0);
     background: var(--bark);
   }
 
+  /* Nom + compteur sur une seule ligne (au lieu d'empilés) pour garder la
+     bande basse. */
   .cave-info {
     flex: 1;
     min-width: 0;
+    display: flex;
+    align-items: baseline;
+    gap: 0.6rem;
   }
 
   .cave-name {
-    display: block;
     font-family: var(--font-display);
     font-weight: 600;
     font-size: 1rem;
@@ -85,7 +89,7 @@ let caveCount = $derived(caveState.caves[playerState.player]?.count ?? 0);
 
   .cave-count {
     font-family: var(--font-mono);
-    font-size: 1.6rem;
+    font-size: 1.3rem;
     color: var(--bark);
     font-variant-numeric: tabular-nums;
   }

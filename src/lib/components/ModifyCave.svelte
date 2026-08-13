@@ -22,11 +22,11 @@
     <h3>Choisissez le type de grotte</h3>
     <div class="option-list">
         <button class="btn btn-secondary option-item" onclick={() => {caveState.setCaveType(playerState.player, 'cave'); closeModal(); }}>Grotte classique</button>
-        <button class="btn btn-secondary option-item" onclick={() => {caveState.setCaveType(playerState.player, 'batCave'); closeModal(); }}>Grotte aux chauves-souris</button>
-        <button class="btn btn-secondary option-item" onclick={() => {caveState.setCaveType(playerState.player, 'collectorsCave'); closeModal(); }}>Grotte du collectionneur</button>
         <button class="btn btn-secondary option-item" onclick={() => {caveState.setCaveType(playerState.player, 'supplyCave'); closeModal(); }}>Grotte à provisions</button>
         <button class="btn btn-secondary option-item" onclick={() => {caveState.setCaveType(playerState.player, 'lonelyCave'); closeModal(); }}>Grotte abandonnée</button>
+        <button class="btn btn-secondary option-item" onclick={() => {caveState.setCaveType(playerState.player, 'batCave'); closeModal(); }}>Grotte aux chauves-souris</button>
         <button class="btn btn-secondary option-item" onclick={() => {caveState.setCaveType(playerState.player, 'smugglersCave'); closeModal(); }}>Grotte de la contrebandière</button>
+        <button class="btn btn-secondary option-item" onclick={() => {caveState.setCaveType(playerState.player, 'collectorsCave'); closeModal(); }}>Grotte du collectionneur</button>
     </div>
 </div>
 
