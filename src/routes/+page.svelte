@@ -49,7 +49,26 @@
 
   } 
 
-  async function handleScanChange(event: Event) {
+  function handleScanChange(event : Event) {
+    const target = event.target as HTMLInputElement 
+    if (!target.files?.length) return 
+    const scan = URL.createObjectURL(target.files[0]);
+
+    forestScanState.imageScanUrl = scan;
+    forestScanState.openModalValiderScan = true;
+    
+   
+  }
+
+  async function validerScan(scan: string) {
+    let preds = await detectCards(scan);
+
+    forestScanState.forestScan = predictionsToRealForest("scan", preds);
+    forestScanState.openModalScan = true;
+    forestScanState.openModalValiderScan = false;
+  }
+  //@deprecated
+  async function handleScanChangeAncien(event: Event) {
     const target = event.target as HTMLInputElement
     if (!target.files?.length) return
     const scan = URL.createObjectURL(target.files[0]);
@@ -99,6 +118,16 @@ async function rotateAndStore() {
   imageUrlState.imageUrl[playerState.player] = rotatedImg.src;
 
 
+}
+
+async function rotateAndStoreScan() {
+  if (!forestScanState.imageScanUrl) return;
+
+  const img = new Image();
+  await new Promise<void>((resolve) => {img.onload = () => resolve(); img.src = forestScanState.imageScanUrl; });
+
+  const rotatedImg = await rotateImage90(img);
+  forestScanState.imageScanUrl = rotatedImg.src;
 }
 
  async function validerImage() {
@@ -174,12 +203,18 @@ async function rotateAndStore() {
 <div class="page-shell">
   <PlayerView />
 
+<!--
+
+J'ai enlevé cette option de scanner une image car l'objectif est de prendre une seule photo mais ça marche pas pour le moment
+donc on garde juste l'option foret scanée
 
 <div class="container">
   <label class="btn btn-primary upload-button">
     Charger un JPG
     <input type="file" accept="image/jpeg,.jpg" capture = "environment" onchange={handleFileChange} />
   </label>
+
+
 
   {#if imageUrlState.imageUrl[playerState.player]}
     <img src={imageUrlState.imageUrl[playerState.player]} alt="Preview" width="640" height="640" class="upload-preview" />
@@ -196,6 +231,8 @@ async function rotateAndStore() {
     <p>Analyse en cours...</p>
   {/if}
 
+
+--> 
 
   <!-- Ouvrir un modal de modification de la fôret scannée, puis bouton pour valider et ajouter le scan à la fôret du joueur-->
   <Modal open={forestScanState.openModalScan} onclose={() => {forestScanState.openModalScan = false; forestScanState.forestScan = null;}}>
@@ -239,7 +276,7 @@ async function rotateAndStore() {
 
 
 
-
+<div class="container">
   <CaveView />
 
   {#if realForestState.realForest[playerState.player]?.forest.length > 0}
@@ -263,7 +300,58 @@ async function rotateAndStore() {
   </div>
 </div>
 
+<Modal open={forestScanState.openModalValiderScan} onclose={() => {forestScanState.openModalValiderScan = false;}}>
+
+  {#if forestScanState.openModalValiderScan}
+
+  <img src={forestScanState.imageScanUrl} alt="Preview" width="640" height="640" class="upload-preview" />
+
+  
+  <div class="scan-confirm-actions">
+    <div class="scan-confirm-row">
+      <button onclick={() => {forestScanState.openModalValiderScan = false; forestScanState.imageScanUrl = null;}} class="btn btn-ghost">Annuler</button>
+      <button class="btn btn-secondary" onclick={rotateAndStoreScan} disabled={loading}>Tourner 90°</button>
+    </div>
+    <div class="scan-confirm-row">
+      <label class="btn btn-secondary scan-button">
+        Reprendre la photo
+        <input type="file" accept="image/jpeg,.jpg" capture="environment" onchange={handleScanChange} />
+      </label>
+      <button onclick={() => validerScan(forestScanState.imageScanUrl)} class="btn btn-primary btn-large" disabled={loading}>Valider</button>
+    </div>
+  </div>
+
+  {/if}
+
+</Modal>
+
 <style>
+/* Confirmation de la photo scannée : 2 rangées — actions secondaires en haut
+   (Annuler / Tourner), reprendre-la-photo + Valider (l'action principale,
+   plus grande) en bas. */
+.scan-confirm-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding-top: 1rem;
+}
+
+.scan-confirm-row {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.scan-confirm-row .btn {
+  flex: 1;
+  min-width: 0;
+}
+
+.btn-large {
+  flex: 1.5;
+  font-size: 1.05rem;
+  padding: 0.9rem 1.2rem;
+  min-height: 52px;
+}
 
   /* Les <label> font office de bouton ; l'input file natif reste présent
      pour l'accessibilité/le clic mais n'a pas à s'afficher lui-même. */
@@ -288,10 +376,13 @@ async function rotateAndStore() {
     display: block;
     width: auto;
     height: auto;
-    max-width: 140px;
-    max-height: 140px;
+    /* S'adapte à la place disponible dans la modale (largeur du dialog),
+       plafonné en hauteur pour qu'une photo très verticale ne déborde pas
+       de l'écran — proportions toujours respectées (pas d'étirement). */
+    max-width: 100%;
+    max-height: 60vh;
     object-fit: contain;
-    margin: 0.75rem 0;
+    margin: 0.75rem auto;
     border-radius: var(--radius-btn);
     border: 1px solid var(--border);
     background: var(--surface-sunken);

@@ -23,6 +23,8 @@
     const isTree = $derived(cardModifState.idCardToModif === treeModifState.idTreeToModif);
 
     const bases = cards.filter(c => c.symbols.includes("tree") || c.symbols.includes("shrub"));
+    const bases_sorted = bases.sort((a, b) =>
+		FR_CARDS[a.name].localeCompare(FR_CARDS[b.name], 'fr'));
 
     const positionRelative = {
         "left" : "side",
@@ -107,7 +109,7 @@
             
             <h3>Choisissez la base</h3>
             
-            {#each bases as base}
+            {#each bases_sorted as base}
             <button class="btn btn-secondary option-item" onclick={() => {
                         treeModifState.treeToModif.tree = base.name ;
                         treeModifState.treeToModif.symbol = TreeColor[base.name] ?? "none";
@@ -132,7 +134,7 @@
     <div class ="modal">
         <div class="modal-content">
             <h3>Choisissez la carte</h3>
-                {#each cardsPossibles(cardModifState.cardToModif?.cardName) as card}
+                {#each cardsPossibles(cardModifState.cardToModif?.cardName).sort((a,b) => FR_CARDS[a.name].localeCompare(FR_CARDS[b.name], 'fr')) as card}
                 <button class="btn btn-secondary option-item" onclick={() => {
                         cardModifState.cardToModif.cardName = card.name;
                         cardModifState.cardToModif.color = "none" //TODO gérer les couleurs des cartes (actuellement on perd l'info de la couleur quand on modifie une carte)
@@ -162,11 +164,13 @@
     </div>
 {/if}
 
-{#if ((cardModifState.somethingSpecial) && (cardModifState.multipleButterflies)) || (canOnlyAddButterfly(treeModifState.treeToModif) && (cardModifState.sideCardToModif === "up"))}
+{#if ((cardModifState.somethingSpecial) && (cardModifState.multipleButterflies)) || (!(cardModifState.somethingSpecial) && canOnlyAddButterfly(treeModifState.treeToModif) && (cardModifState.sideCardToModif === "up"))}
+    {@const papillonCards_sorted = papillonCards().sort((a, b) => FR_CARDS[a.name].localeCompare(FR_CARDS[b.name], 'fr'))}
     <div class="modal">
         <div class="modal-content">
             <h3>Choisissez le papillon</h3>
-            {#each papillonCards() as card}
+            
+            {#each papillonCards_sorted as card}
                 <button class="btn btn-secondary option-item" onclick={() => {
                         cardModifState.cardToModif.cardName = card.name;
                         cardModifState.cardToModif.color = "none" //TODO gérer les couleurs des cartes (actuellement on perd l'info de la couleur quand on modifie une carte)
@@ -203,7 +207,7 @@
     <div class="modal">
         <div class="modal-content">
             <h3>Choisissez le coucou</h3>
-            {#each coucouCards() as card}
+            {#each coucouCards() as card} <!--qu'une seule carte donc pas besoin de trier-->
                 <button class="btn btn-secondary option-item" onclick={() => {
                         cardModifState.cardToModif.cardName = card.name;
                         cardModifState.cardToModif.color = "vert-clair";
@@ -235,11 +239,11 @@
     </div>
 {/if}
 
-{#if ((cardModifState.somethingSpecial) && (cardModifState.addingLievre)) || (canOnlyAddLievre(treeModifState.treeToModif, cardModifState.sideCardToModif) && (cardModifState.sideCardToModif === "left" || cardModifState.sideCardToModif === "right"))}
+{#if ((cardModifState.somethingSpecial) && (cardModifState.addingLievre)) || (!(cardModifState.somethingSpecial) && canOnlyAddLievre(treeModifState.treeToModif, cardModifState.sideCardToModif) && (cardModifState.sideCardToModif === "left" || cardModifState.sideCardToModif === "right"))}
     <div class="modal">
         <div class="modal-content">
             <h3>Choisissez le lièvre</h3>
-            {#each lievreCards() as card}
+            {#each lievreCards() as card} <!--qu'une seule carte donc pas besoin de trier-->
                 <button class="btn btn-secondary option-item" onclick={() => {
                         cardModifState.cardToModif.cardName = card.name;
                         cardModifState.cardToModif.color = "none" //TODO gérer les couleurs des cartes (actuellement on perd l'info de la couleur quand on modifie une carte)
@@ -273,11 +277,11 @@
     </div>
 {/if}
 
-{#if ((cardModifState.somethingSpecial) && (cardModifState.addingCrapaudCommun)) || (canOnlyAddCrapaudCommun(treeModifState.treeToModif) && (cardModifState.sideCardToModif === "down"))}
+{#if ((cardModifState.somethingSpecial) && (cardModifState.addingCrapaudCommun)) || (!(cardModifState.somethingSpecial) && canOnlyAddCrapaudCommun(treeModifState.treeToModif) && (cardModifState.sideCardToModif === "down"))}
     <div class="modal">
         <div class="modal-content">
             <h3>Choisissez la carte</h3>
-            {#each crapaudCommunCards() as card}
+            {#each crapaudCommunCards() as card} <!--qu'une seule carte donc pas besoin de trier-->
                 <button class="btn btn-secondary option-item" onclick={() => {
                         cardModifState.cardToModif.cardName = card.name;
                         cardModifState.cardToModif.color = "none" //TODO gérer les couleurs des cartes (actuellement on perd l'info de la couleur quand on modifie une carte)
@@ -376,7 +380,7 @@
   <div class="modal">
     <div class="modal-content">
       <h3>Choisissez l'oiseau</h3>
-      {#each cards.filter(c => c.symbols.includes("bird") && c.position === "top" && c.name !== "cuckoo") as card}
+      {#each cards.filter(c => c.symbols.includes("bird") && c.position === "top" && c.name !== "cuckoo").sort((a,b) => FR_CARDS[a.name].localeCompare(FR_CARDS[b.name], 'fr')) as card}
         <button class="btn btn-secondary option-item" onclick={() => {
           cardModifState.cardToModif.cardName = card.name;
           cardModifState.cardToModif.color = "none";
@@ -418,7 +422,8 @@
     width: 100%;
     justify-content: flex-start;
     text-align: left;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.2rem;
+    
   }
 
   /* Nuancier de couleurs de carte : chrome du bouton seulement, la couleur

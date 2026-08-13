@@ -34,6 +34,9 @@
     <ForestView forest={forestScanState.forestScan.forest} />
 </div>
 
+
+
+
 <div class="sticky-actions">
     <div class="modal-backdrop">
         <AddATreeView label="+ arbre" />
@@ -52,7 +55,13 @@
        colonne (les arbres ne sont pas centrés un par un), mais la colonne
        elle-même se centre dans le dialog. */
     .scan-shell {
-        width: min(640px, 84vw);
+        /* Le dialog est plafonné à 85vw (Modal.svelte) et .modal-content lui
+           ajoute 2×2rem de padding : demander 84vw ICI, DANS ce padding,
+           dépassait donc systématiquement les 85vw du dialog — celui-ci ne
+           pouvait jamais devenir assez large pour contenir son propre
+           contenu, d'où le débordement non scrollable. On retranche le
+           padding pour rester dans le budget réel du dialog. */
+        width: min(640px, calc(85vw - 4rem));
         margin: 0 auto;
     }
 

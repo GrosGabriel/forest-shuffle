@@ -16,6 +16,8 @@
     let selectedCard = $state("treeSaplings"); //pousse d'arbre par défaut
 
     const bases = cards.filter(c => c.symbols.includes("tree") || c.symbols.includes("shrub"));
+    const bases_sorted = bases.sort((a, b) =>
+		FR_CARDS[a.name].localeCompare(FR_CARDS[b.name], 'fr'));
 
     // floating: bouton flottant façon FAB (page principale) — dans une modale (scan),
     // on garde un bouton normal dans le flux, un position:fixed y casserait la mise en page.
@@ -39,7 +41,7 @@
         <h3>Choisissez la base</h3>
 
         <div class="option-list">
-            {#each bases as base}
+            {#each bases_sorted as base}
             <button class="btn btn-secondary option-item" onclick={() => {
                 openModalNewTree = false;
                 if (forestScanState.openModalScan) {

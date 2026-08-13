@@ -56,17 +56,54 @@
 
   const treeToModifState = useTreeModifState();
 
+  // Seul le Lièvre d'Europe peut s'empiler à plusieurs sur un même côté
+  // (règle du jeu : canOnlyAddLievre interdit d'ajouter autre chose une fois
+  // qu'il y en a un). Dans ce cas précis, on affiche une seule carte + une
+  // pastille "+N" plutôt que N cartes séparées — une colonne ne contient
+  // donc jamais plus d'une carte visuelle, ce qui évite tout le casse-tête
+  // de largeur variable/centrage/débordement pour ce cas.
+  function isStacked(side) {
+    return side.length > 1 && side.every(c => c.cardName === side[0].cardName);
+  }
+
+  function isBareTree(tree) {
+    return tree.up.length === 0 && tree.down.length === 0 && tree.left.length === 0 && tree.right.length === 0;
+  }
+
+  // Regroupe les arbres du même type quand ils n'ont aucune carte autour
+  // (rien à distinguer visuellement entre eux) : un seul cluster affiché,
+  // avec une pastille "+N" sur la carte arbre — même logique que les piles
+  // de lièvres. Un arbre qui a au moins une carte, ou qui est seul de son
+  // type parmi les arbres nus, reste affiché normalement.
+  let displayGroups = $derived.by(() => {
+    const groups = [];
+    const used = new Set();
+    for (const tree of forest) {
+      if (used.has(tree.id)) continue;
+      if (isBareTree(tree)) {
+        const sameType = forest.filter(t => !used.has(t.id) && t.tree === tree.tree && isBareTree(t));
+        sameType.forEach(t => used.add(t.id));
+        groups.push({ representative: sameType[0], count: sameType.length });
+      } else {
+        used.add(tree.id);
+        groups.push({ representative: tree, count: 1 });
+      }
+    }
+    return groups;
+  });
+
 </script>
 
 
 <div class="forest-root">
   <div class="trees-row">
-    {#each forest as treeData}
+    {#each displayGroups as group}
 
+    {@const treeData = group.representative}
     {@const treeCard = cards.find(c => c.name === treeData.tree)}
-    {@const isTree = treeCard?.symbols?.includes('tree')} 
-    
-      <div class="tree-cluster">  
+    {@const isTree = treeCard?.symbols?.includes('tree')}
+
+      <div class="tree-cluster">
 
         <!-- UP row -->
         <div class="card-row row-up">
@@ -100,17 +137,12 @@
 
         
           <!-- LEFT CARD -->
-        
+
           <div class="card-col col-left">
-            {#each treeData.left as card}
+            {#if isStacked(treeData.left)}
+              {@const card = treeData.left[0]}
               <div class="card" style={cardStyle(card.color)}>
-                {#if card.color === 'none'}
-                  <span class="ribbon ribbon-none">
-                    <span class="ribbon-icon">!</span>
-                  </span>
-                {:else}
-                  <span class="ribbon" style={`background:${resolveColor(card.color)}`}></span>
-                {/if}
+                <span class="stack-badge">+{treeData.left.length - 1}</span>
                 <span class="card-name">{FR_CARDS[card.cardName]}</span>
 
                 {#if !forestScanState.openModalScan} <!-- On affiche pas les points si c'est le modal de scan-->
@@ -118,16 +150,36 @@
                 {/if}
 
               </div>
-            {/each}
+            {:else}
+              {#each treeData.left as card}
+                <div class="card" style={cardStyle(card.color)}>
+                  {#if card.color === 'none'}
+                    <span class="ribbon ribbon-none">
+                      <span class="ribbon-icon">!</span>
+                    </span>
+                  {:else}
+                    <span class="ribbon" style={`background:${resolveColor(card.color)}`}></span>
+                  {/if}
+                  <span class="card-name">{FR_CARDS[card.cardName]}</span>
+
+                  {#if !forestScanState.openModalScan} <!-- On affiche pas les points si c'est le modal de scan-->
+                    <span class="card-points">{getCardUnitPoints(card.cardName)}</span>
+                  {/if}
+
+                </div>
+              {/each}
+            {/if}
           </div>
-          
+
           <!-- TREE CARD -->
         
           
             <button class="tree-card" style={`--tree-color: ${resolveColor(treeData.symbol)}; --tree-soft: ${lighten(resolveColor(treeData.symbol), 72)};`}
             onclick={() => {treeToModifState.idTreeToModif = treeData.id; treeToModifState.treeToModif = JSON.parse(JSON.stringify(treeData)) ;treeToModifState.openModalModifTree = true; }}
             >
-              {#if treeData.symbol === 'none'}
+              {#if group.count > 1}
+                <span class="stack-badge">+{group.count - 1}</span>
+              {:else if treeData.symbol === 'none'}
                 <span class="tree-ribbon tree-ribbon-none">
                   <span class="tree-ribbon-icon">!</span>
                 </span>
@@ -146,6 +198,18 @@
 
           <!-- RIGHT CARD -->
           <div class="card-col col-right">
+            {#if isStacked(treeData.right)}
+              {@const card = treeData.right[0]}
+              <div class="card" style={cardStyle(card.color)}>
+                <span class="stack-badge">+{treeData.right.length - 1}</span>
+                <span class="card-name">{FR_CARDS[card.cardName]}</span>
+
+                {#if !forestScanState.openModalScan} <!-- On affiche pas les points si c'est le modal de scan-->
+                  <span class="card-points">{getCardUnitPoints(card.cardName)}</span>
+                {/if}
+
+              </div>
+            {:else}
             {#each treeData.right as card}
               <div class="card" style={cardStyle(card.color)}>
                 {#if card.color === 'none'}
@@ -163,8 +227,9 @@
 
               </div>
             {/each}
+            {/if}
           </div>
-        
+
 
         <!-- DOWN row -->
         <div class="card-row row-down">
@@ -215,6 +280,11 @@
        défile horizontalement sur lui-même plutôt que de déborder sur le reste
        de la page — l'agencement des arbres/cartes ne change pas. */
     overflow-x: auto;
+    /* "contain" : une fois arrivé au bord de ce scroll, le geste ne se
+       propage pas à la modale/page englobante (sinon, en scrollant la forêt
+       jusqu'au bout, on continue à "pousser" la modale entière — ce qui
+       donnait l'impression que les boutons bougeaient). */
+    overscroll-behavior-x: contain;
 
     --tree-w: 68px;
     --tree-h: calc(var(--tree-w) * 7 / 5);
@@ -227,11 +297,12 @@
         ".      top    ."
         "left   tree   right"
         ".      bottom .";
-    grid-template-columns: max-content var(--tree-w) max-content;
-    /* minmax plutôt qu'une hauteur figée : si beaucoup de cartes s'empilent à
-       gauche/droite d'un arbre, la ligne grandit pour les contenir au lieu de
-       les laisser déborder par-dessus le reste de l'affichage. */
-    grid-template-rows: auto minmax(var(--tree-h), auto) auto;
+    /* Gauche/droite ne contiennent jamais plus d'une carte visuelle (les
+       piles de Lièvre d'Europe sont affichées comme 1 carte + pastille "+N",
+       cf. isStacked()) : une largeur fixe à la taille d'une carte suffit,
+       plus besoin de la calculer dynamiquement. */
+    grid-template-columns: calc(var(--tree-w) / 2) var(--tree-w) calc(var(--tree-w) / 2);
+    grid-template-rows: auto var(--tree-h) auto;
     align-items: center;
     justify-items: center;
     gap: 1px;
@@ -254,6 +325,37 @@
   font-family: 'DM Sans', sans-serif; /* ou Inter, system-ui… */
   font-size: calc(var(--tree-w) * 0.12);
   line-height: 1;
+  }
+
+  /* Pastille "+N" sur une carte qui représente en fait une pile de cartes
+     identiques (Lièvre d'Europe, seule carte qui peut s'empiler à plusieurs
+     sur un même côté). */
+  .stack-badge {
+    /* Prend la place de la banderole (coin haut-droit) plutôt que de
+       s'ajouter en plus — une seule couleur ne représenterait de toute façon
+       pas fidèlement une pile qui peut mélanger plusieurs couleurs.
+       Entièrement contenue dans la carte (décalage positif, pas de
+       débordement) — fond neutre pour rester lisible quelle que soit la
+       couleur de la carte en dessous. */
+    position: absolute;
+    /* Décalage, padding ET taille de police proportionnels à --tree-w : les
+       deux fichiers ont une taille de carte différente (ForestView.svelte
+       vs AddACardView.svelte), donc une valeur fixe rendait le badge
+       disproportionné dans l'un des deux. */
+    top: calc(var(--tree-w) * 0.06);
+    right: calc(var(--tree-w) * 0.06);
+    background: rgba(20, 24, 18, 0.72);
+    color: #fff;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 700;
+    /* Taille plancher (max avec une valeur fixe) : proportionnel à
+       --tree-w devenait illisible sur les petites cartes. */
+    font-size: max(10px, calc(var(--tree-w) * 0.16));
+    line-height: 1;
+    padding: calc(var(--tree-w) * 0.045) calc(var(--tree-w) * 0.075);
+    border-radius: 999px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+    white-space: nowrap;
   }
 
   .card-row {
@@ -463,20 +565,20 @@
   flex-direction: 
   column; gap: 6px; 
 }
-.card-col.col-left  { 
-  grid-area: left;   
-  display: flex; 
-  flex-direction: row;    
-  gap: 6px; 
-  align-items: center; 
+.card-col.col-left  {
+  grid-area: left;
+  display: flex;
+  flex-direction: row;
+  gap: 6px;
+  align-items: center;
 }
 
-.card-col.col-right { 
-  grid-area: right;  
-  display: flex; 
-  flex-direction: row;    
-  gap: 6px; 
-  align-items: center; 
+.card-col.col-right {
+  grid-area: right;
+  display: flex;
+  flex-direction: row;
+  gap: 6px;
+  align-items: center;
 }
 
 </style>

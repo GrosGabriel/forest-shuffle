@@ -10,12 +10,16 @@
     import cards from "../../model/glaure/cards.js";
 
     import CardToModifView from "./CardToModifView.svelte";
+    import LievreCountView from "./LievreCountView.svelte";
     import Modal from "./Modal.svelte";
 
     import { createEventDispatcher } from "svelte";
 
 
     const { idTree } = $props();
+
+    let openModalLievreCount = $state(false);
+    let lievreCountSide = $state(null); // "left" ou "right" — quel côté est concerné
 
 
 
@@ -98,6 +102,7 @@
         }
         return tree.down[0].cardName === "commonToad" && tree.down.length == 1;
     }
+
 
 </script>
 
@@ -273,29 +278,34 @@
                     </button>
                     {/if}
 
-                    {#if canOnlyAddLievre(treeModifState.treeToModif,"left")} <!--On peut ajouter qu'un lièvre à gauche-->
-                    <button class="card"
-                    onclick={() => {
-                        const newCard = {
-                            id : crypto.randomUUID(),
-                            cardName : "europeanHare",
-                            color : "none",
-                        }
-                        treeModifState.addCard("left", newCard);
-                        cardModifState.idCardToModif = newCard.id;
-                        cardModifState.somethingSpecial = true;
-                        cardModifState.addingLievre = true;
-                        cardModifState.sideCardToModif = "left";
-                        cardModifState.cardToModif = JSON.parse(JSON.stringify(newCard));
-                        cardModifState.isNewCard = true;
-                        cardModifState.openModalModifCard = true;
-                    }}
-                    >
-                    <span class="card-name"> + </span>
-                    </button>
+                    {#if canOnlyAddLievre(treeModifState.treeToModif,"left")}
+                        <!-- Au moins 1 lièvre déjà présent (1 ou plusieurs) : bouton +
+                             pour en ajouter d'autres, via le compteur par couleur.
+                             Placé avant la carte pour être affiché à sa gauche (côté
+                             extérieur, loin de l'arbre). -->
+                        <button class="card"
+                        onclick={() => {
+                            lievreCountSide = "left";
+                            openModalLievreCount = true;
+                        }}
+                        >
+                        <span class="card-name"> + </span>
+                        </button>
                     {/if}
 
-
+                    {#if treeModifState.treeToModif?.left.length > 1}
+                        <!-- Pile de lièvres (2+) : une seule carte "+N" plutôt que plusieurs
+                             côte à côte — ouvre le compteur par couleur (LievreCountView). -->
+                        <button class="card" style={cardStyle(treeModifState.treeToModif.left[0].color)}
+                        onclick={() => {
+                            lievreCountSide = "left";
+                            openModalLievreCount = true;
+                        }}
+                        >
+                            <span class="stack-badge">+{treeModifState.treeToModif.left.length - 1}</span>
+                            <span class="card-name">{FR_CARDS[treeModifState.treeToModif.left[0].cardName]}</span>
+                        </button>
+                    {:else}
                     {#each treeModifState.treeToModif?.left as card}
                     <button class="card" style={cardStyle(card.color)}
                     onclick={() => {
@@ -304,7 +314,7 @@
                         cardModifState.isNewCard = false;
                         cardModifState.sideCardToModif = "left";
                         cardModifState.openModalModifCard = true;
-                    }} 
+                    }}
                     >
                         {#if card.color === 'none'}
                             <!-- svelte-ignore a11y_click_events_have_key_events -->
@@ -346,10 +356,11 @@
                         <span class="card-name">{FR_CARDS[card.cardName]}</span>
                     </button>
                     {/each}
+                    {/if}
 
-                    
+
                 </div>
-                
+
 
                 <!-- TREE CARD -->
                 
@@ -400,6 +411,19 @@
 
                 <!-- RIGHT -->
                 <div class="card-col col-right">
+                    {#if treeModifState.treeToModif?.right.length > 1}
+                        <!-- Pile de lièvres (2+) : une seule carte "+N" plutôt que plusieurs
+                             côte à côte — ouvre le compteur par couleur (LievreCountView). -->
+                        <button class="card" style={cardStyle(treeModifState.treeToModif.right[0].color)}
+                        onclick={() => {
+                            lievreCountSide = "right";
+                            openModalLievreCount = true;
+                        }}
+                        >
+                            <span class="stack-badge">+{treeModifState.treeToModif.right.length - 1}</span>
+                            <span class="card-name">{FR_CARDS[treeModifState.treeToModif.right[0].cardName]}</span>
+                        </button>
+                    {:else}
                     {#each treeModifState.treeToModif?.right as card}
                     <button class="card" style={cardStyle(card.color)}
                     onclick={() => {
@@ -453,7 +477,7 @@
 
 
                     {#if treeModifState.treeToModif?.right.length == 0}
-                    <button class = "card" 
+                    <button class = "card"
                     onclick = {() => {
                         const newCard = {
                             id : crypto.randomUUID(),
@@ -471,27 +495,19 @@
                     <span class="card-name"> + </span>
                     </button>
                 {/if}
+                    {/if}
 
-                {#if canOnlyAddLievre(treeModifState.treeToModif,"right")} <!--On peut ajouter qu'un lièvre à droite-->
-                    <button class="card"
-                    onclick={() => {
-                        const newCard = {
-                            id : crypto.randomUUID(),
-                            cardName : "europeanHare",
-                            color : "none",
-                        }
-                        treeModifState.addCard("right", newCard);
-                        cardModifState.idCardToModif = newCard.id;
-                        cardModifState.somethingSpecial = true;
-                        cardModifState.addingLievre = true;
-                        cardModifState.sideCardToModif = "right";
-                        cardModifState.cardToModif = JSON.parse(JSON.stringify(newCard));
-                        cardModifState.isNewCard = true;
-                        cardModifState.openModalModifCard = true;
-                    }}
-                    >
-                    <span class="card-name"> + </span>
-                    </button>
+                    {#if canOnlyAddLievre(treeModifState.treeToModif,"right")}
+                        <!-- Au moins 1 lièvre déjà présent (1 ou plusieurs) : bouton +
+                             pour en ajouter d'autres, via le compteur par couleur. -->
+                        <button class="card"
+                        onclick={() => {
+                            lievreCountSide = "right";
+                            openModalLievreCount = true;
+                        }}
+                        >
+                        <span class="card-name"> + </span>
+                        </button>
                     {/if}
 
                 </div>
@@ -603,6 +619,7 @@
     </div>
 </div>
 
+<div class="sticky-actions">
 <div class="modal-backdrop">
     <button onclick={closeModal} class="btn btn-ghost action-cancel">Annuler</button>
     <button onclick={validerModal} class="btn btn-primary action-validate">Valider</button>
@@ -618,6 +635,7 @@
         >
         Supprimer l'arbre
     </button>
+</div>
 </div>
 
 <Modal open={cardModifState.openModalModifCard} onclose={() => {
@@ -643,13 +661,19 @@
 
                                                     }}>
     <CardToModifView  on:close={() => {
-                            cardModifState.sideCardToModif = null; 
-                            cardModifState.somethingSpecial = false; 
-                            cardModifState.openModalModifCard = false; 
+                            cardModifState.sideCardToModif = null;
+                            cardModifState.somethingSpecial = false;
+                            cardModifState.openModalModifCard = false;
                             cardModifState.idCardToModif = null;
                             cardModifState.sideCardToModif = null;
                             }} />
-</Modal>    
+</Modal>
+
+<Modal open={openModalLievreCount} onclose={() => { openModalLievreCount = false; }}>
+    {#if openModalLievreCount}
+        <LievreCountView side={lievreCountSide} on:close={() => { openModalLievreCount = false; }} />
+    {/if}
+</Modal>
 
 
 <style>
@@ -678,11 +702,14 @@
         ".      top    ."
         "left   tree   right"
         ".      bottom .";
-    grid-template-columns: max-content var(--tree-w) max-content;
+    /* Largeur fixe (pas max-content) pour les zones gauche/droite : l'arbre
+       reste toujours exactement au centre de son cluster, qu'il y ait 0 ou
+       10 cartes d'un côté. */
+    grid-template-columns: var(--tree-w) var(--tree-w) var(--tree-w);
     grid-template-rows: auto minmax(var(--tree-h), auto) auto;
     align-items: center;
     justify-items: center;
-    gap: 6px;
+    gap: 3px;
   }
 
   .trees-row {
@@ -704,7 +731,7 @@
   .card-col {
     display: flex;
     flex-direction: row; /*column*/
-    gap: 6px;
+    gap: 1px;
     /* Largeur fixe même si vide */
     min-width: calc(var(--tree-w) / 2);
   }
@@ -770,6 +797,29 @@
     clip-path: polygon(100% 0, 0 0, 100% 100%);
     border-radius: 0 5px 0 0;
     opacity: 0.92;
+  }
+
+  /* Pastille "+N" d'une pile de lièvres — prend la place de la banderole. */
+  .stack-badge {
+    /* Entièrement contenue dans la carte (décalage positif, pas de
+       débordement) — fond neutre pour rester lisible quelle que soit la
+       couleur de la carte en dessous. */
+    position: absolute;
+    /* Décalage, padding ET taille de police proportionnels à --tree-w : ce
+       fichier a des cartes plus grandes que ForestView.svelte, une valeur
+       fixe rendait le badge disproportionné dans l'un des deux. */
+    top: calc(var(--tree-w) * 0.06);
+    right: calc(var(--tree-w) * 0.06);
+    background: rgba(20, 24, 18, 0.72);
+    color: #fff;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 700;
+    font-size: max(10px, calc(var(--tree-w) * 0.16));
+    line-height: 1;
+    padding: calc(var(--tree-w) * 0.045) calc(var(--tree-w) * 0.075);
+    border-radius: 999px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+    white-space: nowrap;
   }
 
   .ribbon-none {
@@ -890,12 +940,16 @@
   flex-direction: 
   column; gap: 6px; 
 }
-.card-col.col-left  { 
-  grid-area: left;   
-  display: flex; 
-  flex-direction: row;    
-  gap: 6px; 
-  align-items: center; 
+.card-col.col-left  {
+  grid-area: left;
+  display: flex;
+  flex-direction: row;
+  gap: 6px;
+  align-items: center;
+  /* Collée contre l'arbre, s'étend vers l'extérieur (la gauche) quand il y a
+     plusieurs cartes — pas centrée dans sa case, sinon la moitié des cartes
+     (ou du bouton "+") déborderait vers l'arbre. */
+  justify-self: end;
 }
 
 .card-col.col-right {
@@ -904,6 +958,24 @@
   flex-direction: row;
   gap: 6px;
   align-items: center;
+  /* Symétrique de col-left : collée contre l'arbre, s'étend vers la droite. */
+  justify-self: start;
+}
+
+/* Colle les boutons en bas du dialog pendant que seul l'éditeur d'arbre
+   défile (au-dessus) — avant, tout le contenu (titre + arbre + boutons)
+   scrollait ensemble, donc les boutons pouvaient sortir de l'écran. Marges
+   négatives : compensent le padding de .modal-content (Modal.svelte) pour
+   venir affleurer le bord du dialog une fois collé — ses coins sont
+   naturellement rognés par le border-radius du dialog lui-même. */
+.sticky-actions {
+  position: sticky;
+  bottom: 0;
+  z-index: 5;
+  background: var(--surface-raised);
+  margin: 1rem -2rem -2rem;
+  padding: 0.75rem 2rem 1.5rem;
+  box-shadow: 0 -8px 12px -8px rgba(0, 0, 0, 0.08);
 }
 
 /* Rangée d'actions sous l'éditeur d'arbre — ne touche pas au visuel des cartes/arbres ci-dessus */
@@ -911,8 +983,8 @@
   display: flex;
   flex-wrap: nowrap;
   gap: 0.4rem;
-  padding: 1rem 0 0;
 }
+
 
 /* Les 3 boutons se partagent la largeur pour tenir sur une seule ligne,
    même dans une modale étroite sur mobile — "Annuler" est secondaire donc

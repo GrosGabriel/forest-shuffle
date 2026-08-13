@@ -2,6 +2,8 @@ import { TreeColor } from "../../model/card-color.js";
 
 let forestScanState = $state(
     {
+        openModalValiderScan : false,
+        imageScanUrl : null, //stocke l'url de l'image scanée pour pouvoir afficher et rotationner
         openModalScan : false,
         forestScan : null, //stocke la foret scannée pour l'afficher et potentiellement la modifiée avant la validation et le merge
 
@@ -22,6 +24,18 @@ const useForestScanState = () => {
         },
         set openModalScan(value) {
             forestScanState.openModalScan = value;
+        },
+        get openModalValiderScan() {
+            return forestScanState.openModalValiderScan;
+        },
+        set openModalValiderScan(value) {
+            forestScanState.openModalValiderScan = value;
+        },
+        get imageScanUrl() {
+            return forestScanState.imageScanUrl;
+        },
+        set imageScanUrl(value) {
+            forestScanState.imageScanUrl = value
         },
 
         updateTree(treeId, newTree) {
