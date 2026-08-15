@@ -10,6 +10,7 @@
 
     import { TreeColor } from "../../model/card-color.js";
     import { colorPalette } from "$lib/utils/foretStyle.js";
+    import { FILTRE_ICONS } from "$lib/utils/filterIcons.js";
 
     const dispatch = createEventDispatcher();
     function closeModal() {
@@ -194,26 +195,28 @@
             <div class="filters">
                 <label class="filter-item">
                     <input type="checkbox" bind:checked={selectedFiltresBase.tree}>
-                    Arbres
+                    <img class="filter-icon" src={FILTRE_ICONS.tree} alt="Arbres">
                 </label>
                 <label class="filter-item">
                     <input type="checkbox" bind:checked={selectedFiltresBase.shrub}>
-                    Arbustes
+                    <img class="filter-icon" src={FILTRE_ICONS.shrub} alt="Arbustes">
                 </label>
             </div>
 
-            {#each bases_sorted_filtered as base}
-            <button class="btn btn-secondary option-item" onclick={() => {
-                        treeModifState.treeToModif.tree = base.name ;
-                        treeModifState.treeToModif.symbol = TreeColor[base.name] ?? "none";
-                        cardModifState.validated = true;
-                        cardModifState.openModalModifCard = false;
-                        selectedFiltresBase.tree = false;
-                        selectedFiltresBase.shrub = false;}}>
-                {FR_CARDS[base.name]}
-            </button>
-            {/each}
-        
+            <div class="option-list">
+                {#each bases_sorted_filtered as base}
+                <button class="btn btn-secondary option-item" onclick={() => {
+                            treeModifState.treeToModif.tree = base.name ;
+                            treeModifState.treeToModif.symbol = TreeColor[base.name] ?? "none";
+                            cardModifState.validated = true;
+                            cardModifState.openModalModifCard = false;
+                            selectedFiltresBase.tree = false;
+                            selectedFiltresBase.shrub = false;}}>
+                    {FR_CARDS[base.name]}
+                </button>
+                {/each}
+            </div>
+
         </div>
     </div>
 {/if}
@@ -237,12 +240,17 @@
                 {#each Object.keys(filtrePos) as key}
                 <label class="filter-item">
                     <input type="checkbox" bind:checked={filtrePos[key]}>
-                    {FILTRE_LABELS[key] ?? key}
+                    {#if FILTRE_ICONS[key]}
+                        <img class="filter-icon" src={FILTRE_ICONS[key]} alt={FILTRE_LABELS[key] ?? key}>
+                    {:else}
+                        {FILTRE_LABELS[key] ?? key}
+                    {/if}
                 </label>
                 {/each}
             </div>
             {/if}
 
+                <div class="option-list">
                 {#each cardsPossibles(cardModifState.cardToModif?.cardName).sort((a,b) => FR_CARDS[a.name].localeCompare(FR_CARDS[b.name], 'fr')) as card}
                 <button class="btn btn-secondary option-item" onclick={() => {
                         cardModifState.cardToModif.cardName = card.name;
@@ -258,6 +266,7 @@
                 </button>
 
                 {/each}
+                </div>
 
                 <button class="btn btn-danger option-item"
                 onclick={() => {
@@ -530,6 +539,17 @@
     margin: 0 0 1rem;
   }
 
+  /* Hauteur fixe (pas max-height) : la zone ne bouge pas quand un filtre
+     réduit le nombre de cartes affichées, elle défile juste en interne. */
+  .option-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    height: 50vh;
+    overflow-y: auto;
+    padding-right: 0.5rem;
+  }
+
   .option-item {
     width: 100%;
     justify-content: flex-start;
@@ -548,25 +568,38 @@
   .filter-item {
     display: inline-flex;
     align-items: center;
-    gap: 0.4rem;
-    padding: 0.4rem 0.8rem;
-    border-radius: 999px;
-    border: 1.5px solid var(--border-strong);
+    justify-content: center;
+    padding: 3px;
+    border-radius: var(--radius-btn);
+    border: 2px solid var(--border-strong);
     font-family: var(--font-body);
     font-size: 0.85rem;
     color: var(--ink-soft);
     cursor: pointer;
-    transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+    transition: background 0.15s ease, border-color 0.15s ease;
   }
   .filter-item:has(input:checked) {
     background: var(--forest-tint-soft);
     border-color: var(--forest);
-    color: var(--forest-hover);
-    font-weight: 600;
   }
   .filter-item input {
-    accent-color: var(--forest);
-    cursor: pointer;
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  .filter-icon {
+    width: 34px;
+    height: 34px;
+    border-radius: 8px;
+    object-fit: cover;
+    display: block;
   }
 
   /* Nuancier de couleurs de carte : chrome du bouton seulement, la couleur

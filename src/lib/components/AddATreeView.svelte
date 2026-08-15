@@ -6,6 +6,7 @@
     import cards from "../../model/glaure/cards.js";
     import { FR_CARDS } from "$lib/i18n/fr-cards";
     import Modal from "./Modal.svelte";
+    import { FILTRE_ICONS } from "$lib/utils/filterIcons.js";
 
     const realForestState = useRealForestState();
     const playerState = usePlayerState();
@@ -60,11 +61,11 @@
         <div class="filters">
             <label class="filter-item">
                 <input type="checkbox" bind:checked={selectedFiltres.tree}>
-                Arbres
+                <img class="filter-icon" src={FILTRE_ICONS.tree} alt="Arbres">
             </label>
             <label class="filter-item">
                 <input type="checkbox" bind:checked={selectedFiltres.shrub}>
-                Arbustes
+                <img class="filter-icon" src={FILTRE_ICONS.shrub} alt="Arbustes">
             </label>
         </div>
 
@@ -118,32 +119,47 @@
     .filter-item {
         display: inline-flex;
         align-items: center;
-        gap: 0.4rem;
-        padding: 0.4rem 0.8rem;
-        border-radius: 999px;
-        border: 1.5px solid var(--border-strong);
+        justify-content: center;
+        padding: 3px;
+        border-radius: var(--radius-btn);
+        border: 2px solid var(--border-strong);
         font-family: var(--font-body);
         font-size: 0.85rem;
         color: var(--ink-soft);
         cursor: pointer;
-        transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+        transition: background 0.15s ease, border-color 0.15s ease;
     }
     .filter-item:has(input:checked) {
         background: var(--forest-tint-soft);
         border-color: var(--forest);
-        color: var(--forest-hover);
-        font-weight: 600;
     }
     .filter-item input {
-        accent-color: var(--forest);
-        cursor: pointer;
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        margin: -1px;
+        padding: 0;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
     }
 
+    .filter-icon {
+        width: 34px;
+        height: 34px;
+        border-radius: 8px;
+        object-fit: cover;
+        display: block;
+    }
+
+    /* Hauteur fixe (pas max-height) : la zone ne bouge pas quand un filtre
+       réduit le nombre de bases affichées, elle défile juste en interne. */
     .option-list {
         display: flex;
         flex-direction: column;
         gap: 0.5rem;
-        max-height: 60vh;
+        height: 50vh;
         overflow-y: auto;
         padding-right : 0.5rem; /* pour éviter que le scroll ne chevauche le texte */
     }
