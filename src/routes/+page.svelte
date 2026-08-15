@@ -61,11 +61,21 @@
   }
 
   async function validerScan(scan: string) {
-    let preds = await detectCards(scan);
+    loading = true;
+    try {
+      let preds = await detectCards(scan);
 
-    forestScanState.forestScan = predictionsToRealForest("scan", preds);
-    forestScanState.openModalScan = true;
-    forestScanState.openModalValiderScan = false;
+      forestScanState.forestScan = predictionsToRealForest("scan", preds);
+      forestScanState.openModalScan = true;
+      forestScanState.openModalValiderScan = false;
+    } catch (e) {
+      // Sans ça, un échec du modèle ONNX/WASM (session, inférence) est totalement
+      // silencieux pour l'utilisateur : le bouton "Valider" semble ne rien faire.
+      console.error("Échec de l'analyse du scan :", e);
+      alert("La reconnaissance de la forêt a échoué. Réessaie, ou vérifie ta connexion si le problème persiste.");
+    } finally {
+      loading = false;
+    }
   }
   //@deprecated
   async function handleScanChangeAncien(event: Event) {
@@ -317,7 +327,7 @@ donc on garde juste l'option foret scanée
         Reprendre la photo
         <input type="file" accept="image/jpeg,.jpg" capture="environment" onchange={handleScanChange} />
       </label>
-      <button onclick={() => validerScan(forestScanState.imageScanUrl)} class="btn btn-primary btn-large" disabled={loading}>Valider</button>
+      <button onclick={() => validerScan(forestScanState.imageScanUrl)} class="btn btn-primary btn-large" disabled={loading}>{loading ? 'Analyse en cours…' : 'Valider'}</button>
     </div>
   </div>
 
