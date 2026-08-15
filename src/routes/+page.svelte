@@ -20,6 +20,7 @@
   import { usePredictionsState } from "$lib/states/predictionsState.svelte.js";
   import { useImageUrlState } from "$lib/states/imageUrlState.svelte.js";
   import { useForestScanState } from "$lib/states/forestScanState.svelte.js";
+  import { useModelState } from "$lib/states/modelState.svelte.js";
 
 
 
@@ -35,6 +36,7 @@
 
   
   const forestScanState = useForestScanState() as any;
+  const modelState = useModelState();
   
 
 
@@ -300,6 +302,24 @@ donc on garde juste l'option foret scanée
 
 <!-- Boutons flottants fixes en bas d'écran -->
 <div class="bottom-ribbon">
+  <div class="model-status-row">
+    <span
+      class="model-status"
+      class:is-ready={modelState.status === 'ready'}
+      class:is-error={modelState.status === 'error'}
+      title={modelState.status === 'error' ? modelState.error : null}
+    >
+      <span class="model-status-dot"></span>
+      {#if modelState.status === 'loading'}
+        Chargement du modèle de reconnaissance…
+      {:else if modelState.status === 'ready'}
+        Modèle de reconnaissance prêt
+      {:else}
+        Modèle de reconnaissance indisponible
+      {/if}
+    </span>
+  </div>
+
   <div class="fab-row">
     <AddATreeView floating={true} label="+ arbre" />
 
@@ -423,6 +443,58 @@ donc on garde juste l'option foret scanée
     justify-content: center;
     gap: 0.6rem;
     pointer-events: auto;
+  }
+
+  .model-status-row {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 0.5rem;
+  }
+
+  .model-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.25rem 0.7rem;
+    border-radius: 999px;
+    background: var(--surface-raised);
+    border: 1px solid var(--border);
+    box-shadow: 0 4px 10px -6px hsl(var(--shadow-color) / 0.35);
+    font-family: var(--font-body);
+    font-size: 0.72rem;
+    color: var(--ink-soft);
+    pointer-events: auto;
+  }
+
+  .model-status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--gold);
+    animation: model-status-pulse 1.4s ease-in-out infinite;
+  }
+
+  .model-status.is-ready .model-status-dot {
+    background: var(--forest);
+    animation: none;
+  }
+
+  .model-status.is-error .model-status-dot {
+    background: var(--danger);
+    animation: none;
+  }
+
+  .model-status.is-ready {
+    color: var(--forest-hover);
+  }
+
+  .model-status.is-error {
+    color: var(--danger-hover);
+  }
+
+  @keyframes model-status-pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.35; }
   }
 
   /* Évite que le contenu principal soit caché sous le bouton flottant */

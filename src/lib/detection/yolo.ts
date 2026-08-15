@@ -1,9 +1,13 @@
 import * as ort from 'onnxruntime-web'
 import { cardFromClassId } from '../../model/card-yolo-to-glaure';
+import { useModelState } from '$lib/states/modelState.svelte.js'
 
 let session : ort.InferenceSession  | null = null
-let sessionReady = false;
-let sessionLoading = false
+// Une seule promesse de chargement partagée par tous les appelants : si deux
+// appels arrivent pendant le chargement (ex. warm-up au montage + clic sur
+// Valider juste après), ils attendent la même promesse au lieu de tourner
+// indéfiniment en cas d'échec (ancien comportement avec un simple flag booléen).
+let sessionPromise : Promise<ort.InferenceSession> | null = null
 
 
 
@@ -32,45 +36,48 @@ async function createAndWarmup(modelUrl: string, providers: ort.InferenceSession
   return candidate
 }
 
-export async function getSession() {
-  if (!session && !sessionLoading) {
-    sessionLoading = true
-    const modelUrl = `${import.meta.env.BASE_URL}/best.onnx` // besoin de /best.onnx pour gh pages
-    const providers = getExecutionProviders() // ordre de priorité selon la plateforme
+async function loadSession(): Promise<ort.InferenceSession> {
+  const modelState = useModelState()
+  modelState.status = 'loading'
+  modelState.error = null
 
+  const modelUrl = `${import.meta.env.BASE_URL}/best.onnx` // besoin de /best.onnx pour gh pages
+  const providers = getExecutionProviders() // ordre de priorité selon la plateforme
+
+  try {
+    session = await createAndWarmup(modelUrl, providers)
+  } catch (e) {
+    // Filet de sécurité si le backend choisi échoue (création ou premier run) :
+    // wasm est le backend le plus universel, on retente avec lui seul avant d'abandonner.
+    console.error('Échec session avec', providers, e)
     try {
-      session = await createAndWarmup(modelUrl, providers)
-    } catch (e) {
-      // Filet de sécurité si le backend choisi échoue (création ou premier run) :
-      // wasm est le backend le plus universel, on retente avec lui seul avant d'abandonner.
-      console.error('Échec session avec', providers, e)
-      try {
-        session = await createAndWarmup(modelUrl, ['wasm'])
-      } catch (e2) {
-        // Même wasm échoue : on réinitialise l'état pour ne pas bloquer indéfiniment les appelants
-        // (sinon la boucle d'attente ci-dessous tournerait pour toujours) et on relaie l'erreur.
-        sessionLoading = false
-        session = null
-        throw e2
-      }
+      session = await createAndWarmup(modelUrl, ['wasm'])
+    } catch (e2) {
+      // Même wasm échoue : on réinitialise l'état pour qu'un prochain appel puisse réessayer
+      // (sinon sessionPromise resterait bloquée sur cet échec pour toujours).
+      sessionPromise = null
+      session = null
+      modelState.status = 'error'
+      modelState.error = e2 instanceof Error ? e2.message : String(e2)
+      throw e2
     }
   }
 
-  while (!sessionReady) {
-    await new Promise(resolve => setTimeout(resolve, 100))
-  }
+  modelState.status = 'ready'
   return session
 }
 
-
+export async function getSession() {
+  if (session) return session
+  if (!sessionPromise) sessionPromise = loadSession()
+  return sessionPromise
+}
 
 //Le warmup consiste à faire une inférence factice pour "chauffer" le moteur d'inférence, charger les shaders, etc.
 //  Cela permet d'obtenir des temps d'inférence plus rapides lors de la première utilisation réelle.
-async function warmup(session: ort.InferenceSession) { 
-  sessionReady = false
+async function warmup(session: ort.InferenceSession) {
   const dummy = new ort.Tensor('float32', new Float32Array(1 * 3 * 640 * 640), [1, 3, 640, 640])
   await session.run({ images: dummy })
-  sessionReady = true
 }
 
 
