@@ -302,7 +302,7 @@ donc on garde juste l'option foret scanée
 
 <!-- Boutons flottants fixes en bas d'écran -->
 <div class="bottom-ribbon">
-  <div class="model-status-row">
+  <div class="fab-row">
     <span
       class="model-status"
       class:is-ready={modelState.status === 'ready'}
@@ -311,16 +311,14 @@ donc on garde juste l'option foret scanée
     >
       <span class="model-status-dot"></span>
       {#if modelState.status === 'loading'}
-        Chargement du modèle de reconnaissance…
+        Charg.
       {:else if modelState.status === 'ready'}
-        Modèle de reconnaissance prêt
+        Prêt
       {:else}
-        Modèle de reconnaissance indisponible
+        Erreur
       {/if}
     </span>
-  </div>
 
-  <div class="fab-row">
     <AddATreeView floating={true} label="+ arbre" />
 
     <label class="fab scan-button">
@@ -441,34 +439,30 @@ donc on garde juste l'option foret scanée
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    gap: 0.6rem;
+    gap: 0.3rem;
     pointer-events: auto;
-  }
-
-  .model-status-row {
-    display: flex;
-    justify-content: center;
-    margin-bottom: 0.5rem;
   }
 
   .model-status {
     display: inline-flex;
     align-items: center;
-    gap: 0.4rem;
-    padding: 0.25rem 0.7rem;
+    gap: 0.2rem;
+    padding: 0.12rem 0.32rem;
     border-radius: 999px;
     background: var(--surface-raised);
     border: 1px solid var(--border);
-    box-shadow: 0 4px 10px -6px hsl(var(--shadow-color) / 0.35);
     font-family: var(--font-body);
-    font-size: 0.72rem;
+    font-size: 0.40rem;
+    line-height: 1.1;
+    white-space: nowrap;
     color: var(--ink-soft);
     pointer-events: auto;
   }
 
   .model-status-dot {
-    width: 8px;
-    height: 8px;
+    width: 6px;
+    height: 6px;
+    flex-shrink: 0;
     border-radius: 50%;
     background: var(--gold);
     animation: model-status-pulse 1.4s ease-in-out infinite;

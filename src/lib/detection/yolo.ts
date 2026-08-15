@@ -41,7 +41,12 @@ async function loadSession(): Promise<ort.InferenceSession> {
   modelState.status = 'loading'
   modelState.error = null
 
-  const modelUrl = `${import.meta.env.BASE_URL}/best.onnx` // besoin de /best.onnx pour gh pages
+  // BASE_URL n'a pas un format garanti constant (ex: peut valoir le marqueur relatif "./" en
+  // build statique au lieu de "/forest-shuffle") : on retire un éventuel "/" final avant de
+  // concaténer, sinon on obtient ".//best.onnx" — que certains hébergeurs tolèrent (normalisent)
+  // et d'autres non (404 silencieux). Vérifié : c'est actuellement le cas en prod (GitHub Pages
+  // normalise, mais on ne veut pas en dépendre).
+  const modelUrl = `${import.meta.env.BASE_URL.replace(/\/$/, '')}/best.onnx`
   const providers = getExecutionProviders() // ordre de priorité selon la plateforme
 
   try {
