@@ -26,18 +26,58 @@
     const bases_sorted = bases.sort((a, b) =>
 		FR_CARDS[a.name].localeCompare(FR_CARDS[b.name], 'fr'));
 
-    const positionRelative = {
-        "left" : "side",
-        "right" : "side",
-        "top" : "top",
-        "bottom" : "bottom",
+    // Le nom de symbole n'est pas toujours identique à la clé du filtre
+    // (ex: la case "pawed" du filtre correspond au symbole "pawedAnimal").
+    const FILTRE_SYMBOL = {
+        pawed: "pawedAnimal",
+        clovenHoofed: "clovenHoofedAnimal",
     };
 
+    const FILTRE_LABELS = {
+        butterfly: "Papillons",
+        bird: "Oiseaux",
+        insect: "Insectes",
+        pawed: "Mammifères à pattes",
+        plant: "Plantes",
+        amphibian: "Amphibiens",
+        mushroom: "Champignons",
+        clovenHoofed: "Ongulés",
+        deer: "Cervidés",
+        bat: "Chauves-souris",
+    };
+
+    function getFiltrePos(position) {
+        switch (position) {
+            case "side":
+                return selectedFiltresSide;
+            case "top":
+                return selectedFiltresUp;
+            case "bottom":
+                return selectedFiltresDown;
+            default:
+                return null;
+        }
+    }
 
     function cardsPossibles(cardName) {
 
         const position = cards.find(c => c.name === cardName)?.position;
-        return cards.filter(c => c.position === position && c.name !== "cuckoo");
+        const filtrePos = getFiltrePos(position);
+
+        const parPosition = cards.filter(c => c.position === position && c.name !== "cuckoo");
+
+        if (!filtrePos) return parPosition;
+
+        // Aucune case cochée : on garde tout. Sinon on ne garde que les
+        // cartes qui correspondent à au moins une case cochée.
+        const aucuneCoche = Object.values(filtrePos).every(v => !v);
+        if (aucuneCoche) return parPosition;
+
+        return parPosition.filter(c =>
+            Object.entries(filtrePos).some(([key, checked]) =>
+                checked && c.symbols.includes(FILTRE_SYMBOL[key] ?? key)
+            )
+        );
     }
 
     function papillonCards() {
@@ -101,6 +141,48 @@
         return (tree.down[0].cardName === "commonToad") && (tree.down.length == 2);
     }
 
+    // Aucune case cochée : on affiche tout. Une case cochée : on affiche
+    // seulement ce type. Les deux cochées : on affiche tout à nouveau.
+    let selectedFiltresBase = $state({
+        tree: false,
+        shrub: false,
+    });
+
+    let bases_sorted_filtered = $derived.by(() => {
+        return bases_sorted.filter(base => {
+            if (!selectedFiltresBase.tree && !selectedFiltresBase.shrub) return true;
+            if (selectedFiltresBase.tree && base.symbols.includes("tree")) return true;
+            if (selectedFiltresBase.shrub && base.symbols.includes("shrub")) return true;
+            return false;
+        });
+    });
+
+
+    let selectedFiltresUp = $state({
+        butterfly: false,
+        bird: false,
+        insect: false,
+        pawed: false,
+        plant: false,
+    });
+
+    let selectedFiltresDown = $state({
+        amphibian: false,
+        insect: false,
+        mushroom: false,
+        pawed: false,
+        plant: false,
+    });
+
+    let selectedFiltresSide = $state({
+        bat: false,
+        bird: false,
+        insect: false,
+        clovenHoofed: false,
+        deer: false,
+        pawed: false,
+    });
+
 </script>
 
 {#if (isTree) && (cardModifState.openModalModifCard) && (!(cardModifState.somethingSpecial))}
@@ -108,13 +190,26 @@
         <div class="modal-content">
             
             <h3>Choisissez la base</h3>
-            
-            {#each bases_sorted as base}
+
+            <div class="filters">
+                <label class="filter-item">
+                    <input type="checkbox" bind:checked={selectedFiltresBase.tree}>
+                    Arbres
+                </label>
+                <label class="filter-item">
+                    <input type="checkbox" bind:checked={selectedFiltresBase.shrub}>
+                    Arbustes
+                </label>
+            </div>
+
+            {#each bases_sorted_filtered as base}
             <button class="btn btn-secondary option-item" onclick={() => {
                         treeModifState.treeToModif.tree = base.name ;
                         treeModifState.treeToModif.symbol = TreeColor[base.name] ?? "none";
                         cardModifState.validated = true;
-                        cardModifState.openModalModifCard = false;}}>
+                        cardModifState.openModalModifCard = false;
+                        selectedFiltresBase.tree = false;
+                        selectedFiltresBase.shrub = false;}}>
                 {FR_CARDS[base.name]}
             </button>
             {/each}
@@ -131,9 +226,23 @@
     && !(canOnlyAddLievre(treeModifState.treeToModif, cardModifState.sideCardToModif)) 
     && !(canOnlyAddCrapaudCommun(treeModifState.treeToModif) && (cardModifState.sideCardToModif === "down"))
     }
+    {@const positionCarteAModif = cards.find(c => c.name === cardModifState.cardToModif?.cardName)?.position}
+    {@const filtrePos = getFiltrePos(positionCarteAModif)}
     <div class ="modal">
         <div class="modal-content">
             <h3>Choisissez la carte</h3>
+
+            {#if filtrePos}
+            <div class="filters">
+                {#each Object.keys(filtrePos) as key}
+                <label class="filter-item">
+                    <input type="checkbox" bind:checked={filtrePos[key]}>
+                    {FILTRE_LABELS[key] ?? key}
+                </label>
+                {/each}
+            </div>
+            {/if}
+
                 {#each cardsPossibles(cardModifState.cardToModif?.cardName).sort((a,b) => FR_CARDS[a.name].localeCompare(FR_CARDS[b.name], 'fr')) as card}
                 <button class="btn btn-secondary option-item" onclick={() => {
                         cardModifState.cardToModif.cardName = card.name;
@@ -141,6 +250,9 @@
                         cardModifState.validated = true;
                         cardModifState.openModalModifCard = false;
                         treeModifState.updateCard(cardModifState.cardToModif);
+                        if (filtrePos) {
+                            for (const key of Object.keys(filtrePos)) filtrePos[key] = false;
+                        }
                 }}>
                 {FR_CARDS[card.name]}
                 </button>
@@ -423,7 +535,38 @@
     justify-content: flex-start;
     text-align: left;
     margin-bottom: 0.2rem;
-    
+
+  }
+
+  .filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin: -0.5rem 0 1rem;
+  }
+
+  .filter-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.4rem 0.8rem;
+    border-radius: 999px;
+    border: 1.5px solid var(--border-strong);
+    font-family: var(--font-body);
+    font-size: 0.85rem;
+    color: var(--ink-soft);
+    cursor: pointer;
+    transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+  }
+  .filter-item:has(input:checked) {
+    background: var(--forest-tint-soft);
+    border-color: var(--forest);
+    color: var(--forest-hover);
+    font-weight: 600;
+  }
+  .filter-item input {
+    accent-color: var(--forest);
+    cursor: pointer;
   }
 
   /* Nuancier de couleurs de carte : chrome du bouton seulement, la couleur
